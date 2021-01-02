@@ -1,3 +1,5 @@
-Check the **distill** branch for code (root) and source (/docs) of my website hosted on [yjunechoe.github.io](yjunechoe.github.io)
+# My personal sandbox
 
-The **master** branch is currently being used for other purposes
+Where I store stuff and try out random things.
+
+Materials hosted on: [yjunechoe.netlify.app](https://yjunechoe.netlify.app/)
