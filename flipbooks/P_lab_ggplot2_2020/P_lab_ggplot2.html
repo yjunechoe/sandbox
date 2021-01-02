@@ -1,0 +1,4673 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Visualizing Data (in R)</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="  June Choe  Phonetics Lab" />
+    <meta name="date" content="2020-10-23" />
+    <script src="libs/header-attrs-2.4.4/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/hygge.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
+    <link href="libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+    <script src="libs/anchor-sections-1.0/anchor-sections.js"></script>
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Visualizing Data (in R)
+## An opinionated style guide
+### <br><br>June Choe<br><br>Phonetics Lab
+### 2020-10-23
+
+---
+
+
+&lt;style type="text/css"&gt;
+@import url('https://fonts.googleapis.com/css?family=Roboto+Slab&display=swap');
+
+body {
+  font-family: Roboto Slab;
+}
+
+a {
+  text-decoration: underline;
+  color: #23395B;
+}
+
+.inverse {
+  background-color: #23395B;
+}
+
+.remark-slide-content {
+  # background-color: #F9F9F9;
+}
+
+.remark-slide-content h1 {
+  font-size: 48;
+}
+
+strong, h1, h2, h3 {
+  color: #23395B;
+}
+
+.sc {
+  font-variant: small-caps;
+}
+
+.remark-code-line {
+  font-size: .8em;
+  line-height: 1.8em;
+}
+
+code.r.hljs.remark-code {
+  font-size: .8em;
+  line-height: 1.8em;
+  position: relative;
+  overflow-x: hidden;
+  color: black;
+}
+
+code.r.hljs.remark-code:hover {
+  overflow-x: visible;
+  width: 700px;
+  border-style: solid;
+}
+
+code.remark-inline-code {
+    font-family: Fira Code;
+    font-size: .8em;
+}
+
+.remark-slide-content{
+  padding-top: .5em;
+  padding-left: 3em;
+}
+
+.pull-left {
+  float: left;
+  width: 45%;
+}
+.pull-right {
+  float: right;
+  width: 49%;
+}
+&lt;/style&gt;
+
+
+
+
+
+# Why?
+
+--
+
+**Why bother making your plots look nice?**
+
+--
+
+- &lt;p&gt;Helps people &lt;strong&gt;remember&lt;/strong&gt; your results better&lt;/p&gt;
+
+--
+
+- Makes your findings look more **credible**
+
+--
+
+- Increases the chance of your work being **shared**
+
+--
+
+- Shows **respect** for your audience
+
+&lt;br&gt;
+
+--
+
+**Goal of this presentation**
+
+--
+
+- &lt;p&gt;Share practical tips for improving readability&lt;/p&gt;
+
+--
+
+- Demonstrate implementations of these ideas (w/ [code](https://gist.github.com/yjunechoe/b7bc540f290044ffebec0a9031d586df))
+
+
+---
+
+
+# Outline
+
+--
+
+**Four practical tips for improving data visualizations**
+
+--
+
+- &lt;p&gt;Make your &lt;strong&gt;text&lt;/strong&gt; readable&lt;/p&gt;
+
+--
+
+- Be generous about **margins and spacing**
+
+--
+
+- Make your **legends** clear
+
+--
+
+- Make **color** easy on your reader's eyes
+
+--
+
+
+
+**Showcases**
+
+--
+
+- Vowel formant plot
+
+- Vowel space plot
+
+- Bar plot of proportions
+
+- Multiple categorical levels
+
+- Animations
+
+---
+
+# Preliminaries
+
+.pull-left[
+
+Work with the `{ggplot2}` ecosystem in R
+
+- Widely used in academia
+
+- Easy to use and highly customizable
+
+- Tons of free resources for learning
+
+- Lots of extensions
+
+]
+
+.pull-right[
+
+&lt;img src="https://d33wubrfki0l68.cloudfront.net/2c6239d311be6d037c251c71c3902792f8c4ddd2/12f67/css/images/hex/ggplot2.png" width="400px" style="display: block; margin: auto 0 auto auto;" /&gt;
+
+]
+
+
+---
+
+
+# Preliminaries
+
+.pull-left[
+
+Work with the `{ggplot2}` ecosystem in R
+
+- Widely used in academia
+
+- Easy to use and highly customizable
+
+- Tons of free resources for learning
+
+- Lots of extensions
+
+
+```r
+library(scales)
+library(colorspace)
+library(ggtext)
+library(lemon)
+library(gganimate)
+# library(patchwork)
+# library(gghighlight)
+# library(ggforce)
+# library(ggrepel)
+```
+
+]
+
+.pull-right[
+&lt;iframe src="https://exts.ggplot2.tidyverse.org/gallery/" height="450px" width="510px"&gt;
+]
+
+
+---
+
+# How does it work?
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="P_lab_ggplot2_files/ggplot_layers.png" alt="Source: https://www.youtube.com/watch?v=h29g21z0a68" width="450px" /&gt;
+&lt;p class="caption"&gt;Source: https://www.youtube.com/watch?v=h29g21z0a68&lt;/p&gt;
+&lt;/div&gt;
+
+---
+
+
+
+
+
+
+count: false
+ 
+
+.panel1-example-1-auto[
+
+```r
+*state_election_votes
+```
+]
+ 
+.panel2-example-1-auto[
+
+```
+  # A tibble: 1,097 x 3
+     State       demVote  Year
+     &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt;
+   1 Alabama       0.85   1932
+   2 Arizona       0.67   1932
+   3 Arkansas      0.86   1932
+   4 California    0.580  1932
+   5 Colorado      0.55   1932
+   6 Connecticut   0.47   1932
+   7 Delaware      0.48   1932
+   8 Florida       0.74   1932
+   9 Georgia       0.92   1932
+  10 Idaho         0.59   1932
+  # ... with 1,087 more rows
+```
+]
+
+---
+count: false
+ 
+
+.panel1-example-1-auto[
+
+```r
+state_election_votes %&gt;%
+* filter(State %in%
+*   c("Pennsylvania",
+*   "Illinois",
+*   "California")
+* )
+```
+]
+ 
+.panel2-example-1-auto[
+
+```
+  # A tibble: 66 x 3
+     State        demVote  Year
+     &lt;chr&gt;          &lt;dbl&gt; &lt;dbl&gt;
+   1 California     0.580  1932
+   2 Illinois       0.55   1932
+   3 Pennsylvania   0.45   1932
+   4 California     0.67   1936
+   5 Illinois       0.580  1936
+   6 Pennsylvania   0.570  1936
+   7 California     0.570  1940
+   8 Illinois       0.51   1940
+   9 Pennsylvania   0.53   1940
+  10 California     0.56   1944
+  # ... with 56 more rows
+```
+]
+
+---
+count: false
+ 
+
+.panel1-example-1-auto[
+
+```r
+state_election_votes %&gt;%
+  filter(State %in%
+    c("Pennsylvania",
+    "Illinois",
+    "California")
+  ) %&gt;%
+* ggplot()
+```
+]
+ 
+.panel2-example-1-auto[
+![](P_lab_ggplot2_files/figure-html/example-1_auto_03_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-example-1-auto[
+
+```r
+state_election_votes %&gt;%
+  filter(State %in%
+    c("Pennsylvania",
+    "Illinois",
+    "California")
+  ) %&gt;%
+  ggplot() +
+* aes(
+*   x = Year,
+*   y = demVote,
+*   color = State
+* )
+```
+]
+ 
+.panel2-example-1-auto[
+![](P_lab_ggplot2_files/figure-html/example-1_auto_04_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-example-1-auto[
+
+```r
+state_election_votes %&gt;%
+  filter(State %in%
+    c("Pennsylvania",
+    "Illinois",
+    "California")
+  ) %&gt;%
+  ggplot() +
+  aes(
+    x = Year,
+    y = demVote,
+    color = State
+  ) +
+* geom_point()
+```
+]
+ 
+.panel2-example-1-auto[
+![](P_lab_ggplot2_files/figure-html/example-1_auto_05_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-example-1-auto[
+
+```r
+state_election_votes %&gt;%
+  filter(State %in%
+    c("Pennsylvania",
+    "Illinois",
+    "California")
+  ) %&gt;%
+  ggplot() +
+  aes(
+    x = Year,
+    y = demVote,
+    color = State
+  ) +
+  geom_point() +
+* scale_y_continuous(
+*   labels = percent_format(accuracy = 1)
+* )
+```
+]
+ 
+.panel2-example-1-auto[
+![](P_lab_ggplot2_files/figure-html/example-1_auto_06_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-example-1-auto[
+
+```r
+state_election_votes %&gt;%
+  filter(State %in%
+    c("Pennsylvania",
+    "Illinois",
+    "California")
+  ) %&gt;%
+  ggplot() +
+  aes(
+    x = Year,
+    y = demVote,
+    color = State
+  ) +
+  geom_point() +
+  scale_y_continuous(
+    labels = percent_format(accuracy = 1)
+  ) +
+* scale_x_continuous(
+*   breaks = pretty_breaks(n= 5)
+* )
+```
+]
+ 
+.panel2-example-1-auto[
+![](P_lab_ggplot2_files/figure-html/example-1_auto_07_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-example-1-auto[
+
+```r
+state_election_votes %&gt;%
+  filter(State %in%
+    c("Pennsylvania",
+    "Illinois",
+    "California")
+  ) %&gt;%
+  ggplot() +
+  aes(
+    x = Year,
+    y = demVote,
+    color = State
+  ) +
+  geom_point() +
+  scale_y_continuous(
+    labels = percent_format(accuracy = 1)
+  ) +
+  scale_x_continuous(
+    breaks = pretty_breaks(n= 5)
+  ) +
+* labs(
+*   y = "Democrat Votes",
+*   title = "Go Vote!"
+* )
+```
+]
+ 
+.panel2-example-1-auto[
+![](P_lab_ggplot2_files/figure-html/example-1_auto_08_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-example-1-auto[
+
+```r
+state_election_votes %&gt;%
+  filter(State %in%
+    c("Pennsylvania",
+    "Illinois",
+    "California")
+  ) %&gt;%
+  ggplot() +
+  aes(
+    x = Year,
+    y = demVote,
+    color = State
+  ) +
+  geom_point() +
+  scale_y_continuous(
+    labels = percent_format(accuracy = 1)
+  ) +
+  scale_x_continuous(
+    breaks = pretty_breaks(n= 5)
+  ) +
+  labs(
+    y = "Democrat Votes",
+    title = "Go Vote!"
+  )
+```
+]
+ 
+.panel2-example-1-auto[
+![](P_lab_ggplot2_files/figure-html/example-1_auto_09_output-1.png)&lt;!-- --&gt;
+]
+
+&lt;style&gt;
+.panel1-example-1-auto {
+  color: black;
+  width: 39.2%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-example-1-auto {
+  color: black;
+  width: 58.8%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-example-1-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+---
+
+count: false
+ 
+
+.panel1-example-1-rotate[
+
+```r
+state_election_votes %&gt;%
+  filter(State %in%
+    c("Pennsylvania",
+    "Illinois",
+    "California")
+  ) %&gt;%
+  ggplot() +
+  aes(
+    x = Year,
+    y = demVote,
+    color = State
+  ) +
+* geom_point() +
+  scale_y_continuous(
+    labels = percent_format(accuracy = 1)
+  ) +
+  scale_x_continuous(
+    breaks = pretty_breaks(n= 5)
+  ) +
+  labs(
+    y = "Democrat Votes",
+    title = "Go Vote!"
+  )
+```
+]
+ 
+.panel2-example-1-rotate[
+![](P_lab_ggplot2_files/figure-html/example-1_rotate_01_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-example-1-rotate[
+
+```r
+state_election_votes %&gt;%
+  filter(State %in%
+    c("Pennsylvania",
+    "Illinois",
+    "California")
+  ) %&gt;%
+  ggplot() +
+  aes(
+    x = Year,
+    y = demVote,
+    color = State
+  ) +
+* geom_line() +
+  scale_y_continuous(
+    labels = percent_format(accuracy = 1)
+  ) +
+  scale_x_continuous(
+    breaks = pretty_breaks(n= 5)
+  ) +
+  labs(
+    y = "Democrat Votes",
+    title = "Go Vote!"
+  )
+```
+]
+ 
+.panel2-example-1-rotate[
+![](P_lab_ggplot2_files/figure-html/example-1_rotate_02_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-example-1-rotate[
+
+```r
+state_election_votes %&gt;%
+  filter(State %in%
+    c("Pennsylvania",
+    "Illinois",
+    "California")
+  ) %&gt;%
+  ggplot() +
+  aes(
+    x = Year,
+    y = demVote,
+    color = State
+  ) +
+* geom_line(size = 1) +
+  scale_y_continuous(
+    labels = percent_format(accuracy = 1)
+  ) +
+  scale_x_continuous(
+    breaks = pretty_breaks(n= 5)
+  ) +
+  labs(
+    y = "Democrat Votes",
+    title = "Go Vote!"
+  )
+```
+]
+ 
+.panel2-example-1-rotate[
+![](P_lab_ggplot2_files/figure-html/example-1_rotate_03_output-1.png)&lt;!-- --&gt;
+]
+
+&lt;style&gt;
+.panel1-example-1-rotate {
+  color: black;
+  width: 39.2%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-example-1-rotate {
+  color: black;
+  width: 58.8%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-example-1-rotate {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+---
+
+# Yay a plot!
+
+
+
+.pull-left[
+
+&lt;img src="P_lab_ggplot2_files/figure-html/state_election_plot-1.png" height="450px" style="display: block; margin: auto;" /&gt;
+
+]
+
+.pull-right[
+
+]
+
+---
+
+
+# Yay a plot... ?
+
+.pull-left[
+
+&lt;img src="P_lab_ggplot2_files/figure-html/state_election_plot-1.png" height="450px" style="display: block; margin: auto;" /&gt;
+
+]
+
+.pull-right[
+
+**A few problems**
+
+- Text is small and narrow
+
+- Plot elements are squished together
+
+- Color doesn't grab attention
+
+- Legend is off to the side on its own
+
+]
+
+---
+
+#1. Text
+
+Many different ways to style text:
+
+--
+
+- &lt;p&gt;&lt;span style="font-size: .7em"&gt;font&lt;/span&gt; &lt;span style="font-size: 1.5em"&gt;size&lt;/span&gt;&lt;/p&gt;
+
+--
+
+- Font face (&lt;strong style="color:black"&gt;bold&lt;/strong&gt;, *italic*, &lt;span style="font-variant: small-caps"&gt;small caps&lt;/span&gt;)
+
+--
+
+- Font family (&lt;span style="font-family: Times New Roman"&gt; Times New Roman&lt;/span&gt;, &lt;span style="font-family: Calibri"&gt; Calibri&lt;/span&gt;, &lt;span style="font-family: Arial"&gt; Arial&lt;/span&gt;, &lt;span style="font-family: Wingdings"&gt;Hi friends&lt;/span&gt; )
+
+--
+
+- Font color, line height, letter spacing, angle, weight, etc.
+
+--
+
+&lt;br&gt;
+
+Unless you make your plots with html/css/js, you'll likely only have access to:
+
+--
+
+- &lt;p&gt;Font size, font family, and limited set of font styles&lt;/p&gt;
+
+--
+
+- But you can get pretty far with these!
+
+---
+
+
+
+
+count: false
+ 
+
+.panel1-text-auto[
+
+```r
+*state_election_plot
+```
+]
+ 
+.panel2-text-auto[
+![](P_lab_ggplot2_files/figure-html/text_auto_01_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-text-auto[
+
+```r
+state_election_plot +
+* theme(text = element_text(family = "Roboto"))
+```
+]
+ 
+.panel2-text-auto[
+![](P_lab_ggplot2_files/figure-html/text_auto_02_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-text-auto[
+
+```r
+state_election_plot +
+  theme(text = element_text(family = "Roboto")) +
+* theme(text = element_text(size = 15))
+```
+]
+ 
+.panel2-text-auto[
+![](P_lab_ggplot2_files/figure-html/text_auto_03_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-text-auto[
+
+```r
+state_election_plot +
+  theme(text = element_text(family = "Roboto")) +
+  theme(text = element_text(size = 15)) +
+* theme(plot.title = element_text(size = 20))
+```
+]
+ 
+.panel2-text-auto[
+![](P_lab_ggplot2_files/figure-html/text_auto_04_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-text-auto[
+
+```r
+state_election_plot +
+  theme(text = element_text(family = "Roboto")) +
+  theme(text = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20)) +
+* theme(plot.title = element_text(family = "Roboto Slab"))
+```
+]
+ 
+.panel2-text-auto[
+![](P_lab_ggplot2_files/figure-html/text_auto_05_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-text-auto[
+
+```r
+state_election_plot +
+  theme(text = element_text(family = "Roboto")) +
+  theme(text = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20)) +
+  theme(plot.title = element_text(family = "Roboto Slab")) +
+* theme(plot.title.position = "plot")
+```
+]
+ 
+.panel2-text-auto[
+![](P_lab_ggplot2_files/figure-html/text_auto_06_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-text-auto[
+
+```r
+state_election_plot +
+  theme(text = element_text(family = "Roboto")) +
+  theme(text = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20)) +
+  theme(plot.title = element_text(family = "Roboto Slab")) +
+  theme(plot.title.position = "plot") +
+* labs(x = "Election Year")
+```
+]
+ 
+.panel2-text-auto[
+![](P_lab_ggplot2_files/figure-html/text_auto_07_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-text-auto[
+
+```r
+state_election_plot +
+  theme(text = element_text(family = "Roboto")) +
+  theme(text = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20)) +
+  theme(plot.title = element_text(family = "Roboto Slab")) +
+  theme(plot.title.position = "plot") +
+  labs(x = "Election Year") +
+* labs(y = NULL)
+```
+]
+ 
+.panel2-text-auto[
+![](P_lab_ggplot2_files/figure-html/text_auto_08_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-text-auto[
+
+```r
+state_election_plot +
+  theme(text = element_text(family = "Roboto")) +
+  theme(text = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20)) +
+  theme(plot.title = element_text(family = "Roboto Slab")) +
+  theme(plot.title.position = "plot") +
+  labs(x = "Election Year") +
+  labs(y = NULL) +
+* labs(title = "Percent of democrat votes by state")
+```
+]
+ 
+.panel2-text-auto[
+![](P_lab_ggplot2_files/figure-html/text_auto_09_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-text-auto[
+
+```r
+state_election_plot +
+  theme(text = element_text(family = "Roboto")) +
+  theme(text = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20)) +
+  theme(plot.title = element_text(family = "Roboto Slab")) +
+  theme(plot.title.position = "plot") +
+  labs(x = "Election Year") +
+  labs(y = NULL) +
+  labs(title = "Percent of democrat votes by state") +
+* labs(subtitle = "We're a swing state! Go vote!")
+```
+]
+ 
+.panel2-text-auto[
+![](P_lab_ggplot2_files/figure-html/text_auto_10_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-text-auto[
+
+```r
+state_election_plot +
+  theme(text = element_text(family = "Roboto")) +
+  theme(text = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20)) +
+  theme(plot.title = element_text(family = "Roboto Slab")) +
+  theme(plot.title.position = "plot") +
+  labs(x = "Election Year") +
+  labs(y = NULL) +
+  labs(title = "Percent of democrat votes by state") +
+  labs(subtitle = "We're a swing state! Go vote!") +
+* theme(plot.subtitle = element_text(face = "italic"))
+```
+]
+ 
+.panel2-text-auto[
+![](P_lab_ggplot2_files/figure-html/text_auto_11_output-1.png)&lt;!-- --&gt;
+]
+
+&lt;style&gt;
+.panel1-text-auto {
+  color: black;
+  width: 39.2%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-text-auto {
+  color: black;
+  width: 58.8%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-text-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+---
+
+count: false
+ 
+
+.panel1-text-rotate[
+
+```r
+state_election_plot +
+* theme(text = element_text(family = "Adelle")) +
+  theme(text = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20)) +
+  theme(plot.title = element_text(family = "Roboto Slab")) +
+  theme(plot.title.position = "plot") +
+  labs(x = "Election Year") +
+  labs(y = NULL) +
+  labs(title = "Percent of democrat votes by state") +
+  labs(subtitle = "We're a swing state! Go vote!") +
+  theme(plot.subtitle = element_text(face = "italic"))
+```
+]
+ 
+.panel2-text-rotate[
+![](P_lab_ggplot2_files/figure-html/text_rotate_01_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-text-rotate[
+
+```r
+state_election_plot +
+* theme(text = element_text(family = "Bitter")) +
+  theme(text = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20)) +
+  theme(plot.title = element_text(family = "Roboto Slab")) +
+  theme(plot.title.position = "plot") +
+  labs(x = "Election Year") +
+  labs(y = NULL) +
+  labs(title = "Percent of democrat votes by state") +
+  labs(subtitle = "We're a swing state! Go vote!") +
+  theme(plot.subtitle = element_text(face = "italic"))
+```
+]
+ 
+.panel2-text-rotate[
+![](P_lab_ggplot2_files/figure-html/text_rotate_02_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-text-rotate[
+
+```r
+state_election_plot +
+* theme(text = element_text(family = "Futura Bk BT")) +
+  theme(text = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20)) +
+  theme(plot.title = element_text(family = "Roboto Slab")) +
+  theme(plot.title.position = "plot") +
+  labs(x = "Election Year") +
+  labs(y = NULL) +
+  labs(title = "Percent of democrat votes by state") +
+  labs(subtitle = "We're a swing state! Go vote!") +
+  theme(plot.subtitle = element_text(face = "italic"))
+```
+]
+ 
+.panel2-text-rotate[
+![](P_lab_ggplot2_files/figure-html/text_rotate_03_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-text-rotate[
+
+```r
+state_election_plot +
+* theme(text = element_text(family = "Montserrat")) +
+  theme(text = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20)) +
+  theme(plot.title = element_text(family = "Roboto Slab")) +
+  theme(plot.title.position = "plot") +
+  labs(x = "Election Year") +
+  labs(y = NULL) +
+  labs(title = "Percent of democrat votes by state") +
+  labs(subtitle = "We're a swing state! Go vote!") +
+  theme(plot.subtitle = element_text(face = "italic"))
+```
+]
+ 
+.panel2-text-rotate[
+![](P_lab_ggplot2_files/figure-html/text_rotate_04_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-text-rotate[
+
+```r
+state_election_plot +
+* theme(text = element_text(family = "Montserrat Medium")) +
+  theme(text = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20)) +
+  theme(plot.title = element_text(family = "Roboto Slab")) +
+  theme(plot.title.position = "plot") +
+  labs(x = "Election Year") +
+  labs(y = NULL) +
+  labs(title = "Percent of democrat votes by state") +
+  labs(subtitle = "We're a swing state! Go vote!") +
+  theme(plot.subtitle = element_text(face = "italic"))
+```
+]
+ 
+.panel2-text-rotate[
+![](P_lab_ggplot2_files/figure-html/text_rotate_05_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-text-rotate[
+
+```r
+state_election_plot +
+* theme(text = element_text(family = "Arial")) +
+  theme(text = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20)) +
+  theme(plot.title = element_text(family = "Roboto Slab")) +
+  theme(plot.title.position = "plot") +
+  labs(x = "Election Year") +
+  labs(y = NULL) +
+  labs(title = "Percent of democrat votes by state") +
+  labs(subtitle = "We're a swing state! Go vote!") +
+  theme(plot.subtitle = element_text(face = "italic"))
+```
+]
+ 
+.panel2-text-rotate[
+![](P_lab_ggplot2_files/figure-html/text_rotate_06_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-text-rotate[
+
+```r
+state_election_plot +
+* theme(text = element_text(family = "xkcd")) +
+  theme(text = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20)) +
+  theme(plot.title = element_text(family = "Roboto Slab")) +
+  theme(plot.title.position = "plot") +
+  labs(x = "Election Year") +
+  labs(y = NULL) +
+  labs(title = "Percent of democrat votes by state") +
+  labs(subtitle = "We're a swing state! Go vote!") +
+  theme(plot.subtitle = element_text(face = "italic"))
+```
+]
+ 
+.panel2-text-rotate[
+![](P_lab_ggplot2_files/figure-html/text_rotate_07_output-1.png)&lt;!-- --&gt;
+]
+
+&lt;style&gt;
+.panel1-text-rotate {
+  color: black;
+  width: 39.2%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-text-rotate {
+  color: black;
+  width: 58.8%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-text-rotate {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+---
+
+#1. Text (End!)
+
+
+.pull-left[
+
+
+
+
+```r
+state_election_plot +
+  theme(
+    text = element_text(size = 16, family = "Roboto"),
+    plot.title = element_text(size = 20, family = "Roboto Slab"),
+    plot.title.position = "plot",
+    plot.subtitle = element_text(face = "italic"),
+    axis.text = element_text(size = 14)
+  ) +
+  labs(
+    x = "Election Year",
+    y = NULL,
+    title = "Percent of democrat votes by state",
+    subtitle = "We're a swing state! Go vote!"
+  ) 
+```
+
+
+Save our progress!
+
+
+```r
+state_election_plot_A
+```
+
+
+]
+
+.pull-right[
+
+&lt;img src="P_lab_ggplot2_files/figure-html/text_final-1.png" width="400px" /&gt;
+
+
+]
+
+---
+
+#1. Text (Before-After)
+
+.pull-left[
+
+&lt;img src="P_lab_ggplot2_files/figure-html/unnamed-chunk-9-1.png" width="400px" /&gt;
+
+]
+
+
+.pull-right[
+
+&lt;img src="P_lab_ggplot2_files/figure-html/unnamed-chunk-10-1.png" width="400px" /&gt;
+
+
+]
+
+---
+
+#2. Margins &amp; Spacing
+
+&lt;img src="P_lab_ggplot2_files/figure-html/unnamed-chunk-11-1.png" height="450px" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+#2. Margins &amp; Spacing
+
+&lt;img src="P_lab_ggplot2_files/figure-html/unnamed-chunk-12-1.png" height="450px" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+#2. Margins &amp; Spacing
+
+&lt;img src="P_lab_ggplot2_files/figure-html/unnamed-chunk-13-1.png" height="450px" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+#2. Margins &amp; Spacing
+
+Base {ggplot2} themes don't have _great_ margin defaults for:
+
+--
+
+- &lt;p&gt;Margins around plot&lt;/p&gt;
+
+--
+
+- Margins between plot title and panel
+
+--
+
+- Margins between axis titles and panel
+
+--
+
+- Margins between axis texts and axis title
+
+--
+
+
+&lt;br&gt;
+
+Know your margin/spacing elements!
+
+- `margin(t = 0, r = 0, b = 0, l = 0, unit = c("pt", "mm", "cm", "in"))`
+
+- `hjust`, `vjust`, and `lineheight` in `element_text()`
+
+- `expand` in `scale_*()`/`coord_*()`
+
+---
+
+
+
+
+count: false
+ 
+
+.panel1-margins-auto[
+
+```r
+*state_election_plot_A
+```
+]
+ 
+.panel2-margins-auto[
+![](P_lab_ggplot2_files/figure-html/margins_auto_01_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-margins-auto[
+
+```r
+state_election_plot_A +
+* theme(
+*   plot.background = element_rect(color = 'black')
+* )
+```
+]
+ 
+.panel2-margins-auto[
+![](P_lab_ggplot2_files/figure-html/margins_auto_02_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-margins-auto[
+
+```r
+state_election_plot_A +
+  theme(
+    plot.background = element_rect(color = 'black')
+  ) +
+* theme(
+*   plot.margin = margin(1, .8, .8, .8, "cm")
+* )
+```
+]
+ 
+.panel2-margins-auto[
+![](P_lab_ggplot2_files/figure-html/margins_auto_03_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-margins-auto[
+
+```r
+state_election_plot_A +
+  theme(
+    plot.background = element_rect(color = 'black')
+  ) +
+  theme(
+    plot.margin = margin(1, .8, .8, .8, "cm")
+  ) +
+* theme(
+*   plot.title = element_text(margin = margin(b = .3, unit = "cm"))
+* )
+```
+]
+ 
+.panel2-margins-auto[
+![](P_lab_ggplot2_files/figure-html/margins_auto_04_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-margins-auto[
+
+```r
+state_election_plot_A +
+  theme(
+    plot.background = element_rect(color = 'black')
+  ) +
+  theme(
+    plot.margin = margin(1, .8, .8, .8, "cm")
+  ) +
+  theme(
+    plot.title = element_text(margin = margin(b = .3, unit = "cm"))
+  ) +
+* theme(
+*   plot.subtitle = element_text(margin = margin(b = .3, unit = "cm"))
+* )
+```
+]
+ 
+.panel2-margins-auto[
+![](P_lab_ggplot2_files/figure-html/margins_auto_05_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-margins-auto[
+
+```r
+state_election_plot_A +
+  theme(
+    plot.background = element_rect(color = 'black')
+  ) +
+  theme(
+    plot.margin = margin(1, .8, .8, .8, "cm")
+  ) +
+  theme(
+    plot.title = element_text(margin = margin(b = .3, unit = "cm"))
+  ) +
+  theme(
+    plot.subtitle = element_text(margin = margin(b = .3, unit = "cm"))
+  ) +
+* theme(
+*   axis.text.x = element_text(margin = margin(t = .2, unit = "cm"))
+* )
+```
+]
+ 
+.panel2-margins-auto[
+![](P_lab_ggplot2_files/figure-html/margins_auto_06_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-margins-auto[
+
+```r
+state_election_plot_A +
+  theme(
+    plot.background = element_rect(color = 'black')
+  ) +
+  theme(
+    plot.margin = margin(1, .8, .8, .8, "cm")
+  ) +
+  theme(
+    plot.title = element_text(margin = margin(b = .3, unit = "cm"))
+  ) +
+  theme(
+    plot.subtitle = element_text(margin = margin(b = .3, unit = "cm"))
+  ) +
+  theme(
+    axis.text.x = element_text(margin = margin(t = .2, unit = "cm"))
+  ) +
+* theme(
+*   axis.text.y = element_text(margin = margin(r = .1, unit = "cm"))
+* )
+```
+]
+ 
+.panel2-margins-auto[
+![](P_lab_ggplot2_files/figure-html/margins_auto_07_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-margins-auto[
+
+```r
+state_election_plot_A +
+  theme(
+    plot.background = element_rect(color = 'black')
+  ) +
+  theme(
+    plot.margin = margin(1, .8, .8, .8, "cm")
+  ) +
+  theme(
+    plot.title = element_text(margin = margin(b = .3, unit = "cm"))
+  ) +
+  theme(
+    plot.subtitle = element_text(margin = margin(b = .3, unit = "cm"))
+  ) +
+  theme(
+    axis.text.x = element_text(margin = margin(t = .2, unit = "cm"))
+  ) +
+  theme(
+    axis.text.y = element_text(margin = margin(r = .1, unit = "cm"))
+  ) +
+* theme(
+*   axis.title.x = element_text(margin = margin(t = .3, unit = "cm"))
+* )
+```
+]
+ 
+.panel2-margins-auto[
+![](P_lab_ggplot2_files/figure-html/margins_auto_08_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-margins-auto[
+
+```r
+state_election_plot_A +
+  theme(
+    plot.background = element_rect(color = 'black')
+  ) +
+  theme(
+    plot.margin = margin(1, .8, .8, .8, "cm")
+  ) +
+  theme(
+    plot.title = element_text(margin = margin(b = .3, unit = "cm"))
+  ) +
+  theme(
+    plot.subtitle = element_text(margin = margin(b = .3, unit = "cm"))
+  ) +
+  theme(
+    axis.text.x = element_text(margin = margin(t = .2, unit = "cm"))
+  ) +
+  theme(
+    axis.text.y = element_text(margin = margin(r = .1, unit = "cm"))
+  ) +
+  theme(
+    axis.title.x = element_text(margin = margin(t = .3, unit = "cm"))
+  ) +
+* coord_cartesian(expand = FALSE)
+```
+]
+ 
+.panel2-margins-auto[
+![](P_lab_ggplot2_files/figure-html/margins_auto_09_output-1.png)&lt;!-- --&gt;
+]
+
+&lt;style&gt;
+.panel1-margins-auto {
+  color: black;
+  width: 39.2%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-margins-auto {
+  color: black;
+  width: 58.8%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-margins-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+---
+
+count: false
+ 
+
+.panel1-margins-rotate[
+
+```r
+state_election_plot_A +
+  theme(
+    plot.background = element_rect(color = 'black')
+  ) +
+  theme(
+    plot.margin = margin(1, .8, .8, .8, "cm")
+  ) +
+  theme(
+    plot.title = element_text(margin = margin(b = .3, unit = "cm"))
+  ) +
+  theme(
+    plot.subtitle = element_text(margin = margin(b = .3, unit = "cm"))
+  ) +
+  theme(
+    axis.text.x = element_text(margin = margin(t = .2, unit = "cm"))
+  ) +
+  theme(
+    axis.text.y = element_text(margin = margin(r = .1, unit = "cm"))
+  ) +
+  theme(
+    axis.title.x = element_text(margin = margin(t = .3, unit = "cm"))
+  ) +
+* scale_x_continuous(expand = expansion(mult = 0, add = 3))
+```
+]
+ 
+.panel2-margins-rotate[
+![](P_lab_ggplot2_files/figure-html/margins_rotate_01_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-margins-rotate[
+
+```r
+state_election_plot_A +
+  theme(
+    plot.background = element_rect(color = 'black')
+  ) +
+  theme(
+    plot.margin = margin(1, .8, .8, .8, "cm")
+  ) +
+  theme(
+    plot.title = element_text(margin = margin(b = .3, unit = "cm"))
+  ) +
+  theme(
+    plot.subtitle = element_text(margin = margin(b = .3, unit = "cm"))
+  ) +
+  theme(
+    axis.text.x = element_text(margin = margin(t = .2, unit = "cm"))
+  ) +
+  theme(
+    axis.text.y = element_text(margin = margin(r = .1, unit = "cm"))
+  ) +
+  theme(
+    axis.title.x = element_text(margin = margin(t = .3, unit = "cm"))
+  ) +
+* scale_x_continuous(expand = expansion(mult = 0, add = 3), breaks = pretty_breaks(5))
+```
+]
+ 
+.panel2-margins-rotate[
+![](P_lab_ggplot2_files/figure-html/margins_rotate_02_output-1.png)&lt;!-- --&gt;
+]
+
+&lt;style&gt;
+.panel1-margins-rotate {
+  color: black;
+  width: 39.2%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-margins-rotate {
+  color: black;
+  width: 58.8%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-margins-rotate {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+---
+
+#2. Margins &amp; Spacing (End!)
+
+.pull-left[
+
+
+
+
+```r
+state_election_plot_A +
+  theme(
+    plot.margin = margin(1, .8, .8, .8, "cm"),
+    plot.title = element_text(margin = margin(b = .3, unit = "cm")),
+    plot.subtitle = element_text(margin = margin(b = .3, unit = "cm")),
+    axis.text.x = element_text(margin = margin(t = .2, unit = "cm")),
+    axis.text.y = element_text(margin = margin(r = .1, unit = "cm")),
+    axis.title.x = element_text(margin = margin(t = .3, unit = "cm"))
+  ) +
+  scale_x_continuous(
+    expand = expansion(mult = 0, add = 3),
+    breaks = pretty_breaks(5)
+  )
+```
+
+
+Save our progress!
+
+
+```r
+state_election_plot_B
+```
+
+]
+
+
+.pull-right[
+
+&lt;img src="P_lab_ggplot2_files/figure-html/margins_final-1.png" width="400px" /&gt;
+
+]
+
+
+
+---
+
+#2. Margins &amp; Spacing (Before-After)
+
+.pull-left[
+
+&lt;img src="P_lab_ggplot2_files/figure-html/unnamed-chunk-16-1.png" width="400px" /&gt;
+
+]
+
+
+.pull-right[
+
+&lt;img src="P_lab_ggplot2_files/figure-html/unnamed-chunk-17-1.png" width="400px" /&gt;
+
+]
+
+---
+
+class: inverse
+
+#2. Margins &amp; Spacing (Before-After)
+
+.pull-left[
+
+&lt;img src="P_lab_ggplot2_files/figure-html/unnamed-chunk-18-1.png" width="400px" /&gt;
+
+]
+
+
+.pull-right[
+
+&lt;img src="P_lab_ggplot2_files/figure-html/unnamed-chunk-19-1.png" width="400px" /&gt;
+
+]
+
+---
+
+
+#3. Legends
+
+--
+
+Legends are really hard:
+
+--
+
+- &lt;p&gt;They contain important info, but difficult to make them not look out of place&lt;/p&gt;
+
+--
+
+- It's better not to have a legend, if you can get away with it
+
+--
+
+- But sometimes we don't have the luxury of doing so
+
+--
+
+&lt;br&gt;
+
+Alternative: consider _labeling the data directly_
+
+
+---
+
+class: inverse, center, middle
+
+&lt;img src="P_lab_ggplot2_files/538plots.gif" width="550px" /&gt;
+
+
+---
+
+#3. Legends
+
+Legends are really hard:
+
+- &lt;p&gt;They contain important info, but difficult to make them not look out of place&lt;/p&gt;
+
+- It's better not to have a legend, if you can get away with it
+
+- But sometimes we don't have the luxury of doing so
+
+&lt;br&gt;
+
+Alternative: consider _labeling the data directly_
+
+--
+
+&lt;br&gt;
+
+But if you must have a legend, make it so that the reader **_can't help_** but to look at
+
+--
+
+- &lt;p&gt;Positioned at the top-left or top-center of the plot&lt;/p&gt;
+
+--
+
+- Blend smoothly into the rest of the plot (_NOT_ make them stand out!)
+
+
+---
+
+
+
+count: false
+ 
+
+.panel1-legends2-auto[
+
+```r
+*state_election_plot_B
+```
+]
+ 
+.panel2-legends2-auto[
+![](P_lab_ggplot2_files/figure-html/legends2_auto_01_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-legends2-auto[
+
+```r
+state_election_plot_B +
+* theme(
+*   legend.key = element_rect(fill = NA)
+* )
+```
+]
+ 
+.panel2-legends2-auto[
+![](P_lab_ggplot2_files/figure-html/legends2_auto_02_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-legends2-auto[
+
+```r
+state_election_plot_B +
+  theme(
+    legend.key = element_rect(fill = NA)
+  ) +
+* theme(
+*   legend.position = c(.45, .93)
+* )
+```
+]
+ 
+.panel2-legends2-auto[
+![](P_lab_ggplot2_files/figure-html/legends2_auto_03_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-legends2-auto[
+
+```r
+state_election_plot_B +
+  theme(
+    legend.key = element_rect(fill = NA)
+  ) +
+  theme(
+    legend.position = c(.45, .93)
+  ) +
+* theme(
+*   legend.direction = "horizontal"
+* )
+```
+]
+ 
+.panel2-legends2-auto[
+![](P_lab_ggplot2_files/figure-html/legends2_auto_04_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-legends2-auto[
+
+```r
+state_election_plot_B +
+  theme(
+    legend.key = element_rect(fill = NA)
+  ) +
+  theme(
+    legend.position = c(.45, .93)
+  ) +
+  theme(
+    legend.direction = "horizontal"
+  ) +
+* theme(
+*   legend.background = element_rect(fill = "grey92")
+* )
+```
+]
+ 
+.panel2-legends2-auto[
+![](P_lab_ggplot2_files/figure-html/legends2_auto_05_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-legends2-auto[
+
+```r
+state_election_plot_B +
+  theme(
+    legend.key = element_rect(fill = NA)
+  ) +
+  theme(
+    legend.position = c(.45, .93)
+  ) +
+  theme(
+    legend.direction = "horizontal"
+  ) +
+  theme(
+    legend.background = element_rect(fill = "grey92")
+  ) +
+* scale_y_continuous(
+*   expand = expansion(0, .05),
+*   labels = percent_format(accuracy = 1)
+* )
+```
+]
+ 
+.panel2-legends2-auto[
+![](P_lab_ggplot2_files/figure-html/legends2_auto_06_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-legends2-auto[
+
+```r
+state_election_plot_B +
+  theme(
+    legend.key = element_rect(fill = NA)
+  ) +
+  theme(
+    legend.position = c(.45, .93)
+  ) +
+  theme(
+    legend.direction = "horizontal"
+  ) +
+  theme(
+    legend.background = element_rect(fill = "grey92")
+  ) +
+  scale_y_continuous(
+    expand = expansion(0, .05),
+    labels = percent_format(accuracy = 1)
+  ) +
+* labs(color = NULL)
+```
+]
+ 
+.panel2-legends2-auto[
+![](P_lab_ggplot2_files/figure-html/legends2_auto_07_output-1.png)&lt;!-- --&gt;
+]
+
+&lt;style&gt;
+.panel1-legends2-auto {
+  color: black;
+  width: 39.2%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-legends2-auto {
+  color: black;
+  width: 58.8%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-legends2-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+---
+
+#3. Legends (End!)
+
+.pull-left[
+
+
+
+
+```r
+state_election_plot_B +
+  theme(
+    legend.key = element_rect(fill = NA),
+    legend.position = c(.45, .93),
+    legend.direction = "horizontal",
+    legend.background = element_rect(fill = "grey92")
+  ) + 
+  scale_y_continuous(
+    expand = expansion(0, .05),
+    labels = percent_format(accuracy = 1)
+  ) +
+  labs(color = NULL)
+```
+
+Save our progress!
+
+
+```r
+state_election_plot_C
+```
+
+]
+
+
+.pull-right[
+
+&lt;img src="P_lab_ggplot2_files/figure-html/legends_final-1.png" width="400px" /&gt;
+
+]
+
+
+---
+
+#3. Legends (Before-After)
+
+.pull-left[
+
+&lt;img src="P_lab_ggplot2_files/figure-html/unnamed-chunk-23-1.png" width="400px" /&gt;
+
+]
+
+
+.pull-right[
+
+&lt;img src="P_lab_ggplot2_files/figure-html/unnamed-chunk-24-1.png" width="400px" /&gt;
+
+
+]
+
+
+---
+
+#4. Color
+
+--
+
+Colors are a double-edged sword
+
+--
+
+- &lt;p&gt;Perception can vary widely depending on reader, medium, culture, etc.&lt;/p&gt;
+
+--
+
+- There are multiple, complex representations (RGB, wavelength, hex, [HSV](https://colordesigner.io/convert/hextohsv))
+
+---
+
+class: center, middle
+
+&lt;img src="https://yjunechoe.github.io/posts/2020-10-22-analysis-of-everycolorbots-tweets/HSV.png" width="600px" /&gt;
+
+---
+
+#4. Color
+
+Colors are a double-edged sword
+
+
+- Perception can vary widely depending on reader, medium, culture, etc.
+
+
+- There are multiple, complex representations (RGB, wavelength, hex, [HSV](https://colordesigner.io/convert/hextohsv))
+
+--
+
+&lt;br&gt;
+
+If you must, DO:
+
+--
+
+- &lt;p&gt;Avoid pure colors (no random sampling from the rainbow!)&lt;/p&gt;
+
+--
+
+- Contrast colors in more than one dimension
+
+
+---
+
+class: center, middle
+
+&lt;img src="P_lab_ggplot2_files/avoid_pure_colors.png" width="650px" /&gt;
+
+&lt;br&gt;
+
+source: https://blog.datawrapper.de/beautifulcolors/
+
+---
+
+class: center, middle
+
+&lt;img src="P_lab_ggplot2_files/combine_diff_dimensions.png" width="650px" /&gt;
+
+&lt;br&gt;
+
+source: https://blog.datawrapper.de/beautifulcolors/
+
+---
+
+
+#4. Color
+
+
+Colors are a double-edged sword
+
+
+- Perception can vary widely depending on reader, medium, culture, etc.
+
+
+- There are multiple, complex representations (RGB, wavelength, hex, [HSV](https://colordesigner.io/convert/hextohsv))
+
+
+&lt;br&gt;
+
+If you must, DO:
+
+
+- Avoid pure colors (no random sampling from the rainbow!)
+
+
+- Contrast colors in more than one dimension
+
+
+&lt;br&gt;
+
+If you aren't sure, use [pre-made palettes](https://github.com/EmilHvitfeldt/paletteer) or play around with [online color tools](https://color.adobe.com/create/color-wheel)
+
+
+---
+
+class: center, middle
+
+&lt;iframe src="https://paletton.com/" height="600px" width="1050px"&gt;
+
+---
+
+
+
+
+
+count: false
+ 
+
+.panel1-colors1-auto[
+
+```r
+*state_election_plot_C
+```
+]
+ 
+.panel2-colors1-auto[
+![](P_lab_ggplot2_files/figure-html/colors1_auto_01_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-colors1-auto[
+
+```r
+state_election_plot_C +
+* theme(panel.background = element_rect(fill = NA))
+```
+]
+ 
+.panel2-colors1-auto[
+![](P_lab_ggplot2_files/figure-html/colors1_auto_02_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-colors1-auto[
+
+```r
+state_election_plot_C +
+  theme(panel.background = element_rect(fill = NA)) +
+* theme(legend.background = element_rect(fill = NA))
+```
+]
+ 
+.panel2-colors1-auto[
+![](P_lab_ggplot2_files/figure-html/colors1_auto_03_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-colors1-auto[
+
+```r
+state_election_plot_C +
+  theme(panel.background = element_rect(fill = NA)) +
+  theme(legend.background = element_rect(fill = NA)) +
+* theme(axis.line = element_line())
+```
+]
+ 
+.panel2-colors1-auto[
+![](P_lab_ggplot2_files/figure-html/colors1_auto_04_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-colors1-auto[
+
+```r
+state_election_plot_C +
+  theme(panel.background = element_rect(fill = NA)) +
+  theme(legend.background = element_rect(fill = NA)) +
+  theme(axis.line = element_line()) +
+* scale_color_manual(
+*   values = c("#F8766D", "#00BA38", "#619CFF")
+* )
+```
+]
+ 
+.panel2-colors1-auto[
+![](P_lab_ggplot2_files/figure-html/colors1_auto_05_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-colors1-auto[
+
+```r
+state_election_plot_C +
+  theme(panel.background = element_rect(fill = NA)) +
+  theme(legend.background = element_rect(fill = NA)) +
+  theme(axis.line = element_line()) +
+  scale_color_manual(
+    values = c("#F8766D", "#00BA38", "#619CFF")
+  ) +
+* scale_color_manual(
+*   values = c(
+*     hex(HSV(  4,   0.56,    0.97)),
+*     hex(HSV(138,      1,    0.73)),
+*     hex(HSV(218,   0.62,       1))
+*   )
+* )
+```
+]
+ 
+.panel2-colors1-auto[
+![](P_lab_ggplot2_files/figure-html/colors1_auto_06_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-colors1-auto[
+
+```r
+state_election_plot_C +
+  theme(panel.background = element_rect(fill = NA)) +
+  theme(legend.background = element_rect(fill = NA)) +
+  theme(axis.line = element_line()) +
+  scale_color_manual(
+    values = c("#F8766D", "#00BA38", "#619CFF")
+  ) +
+  scale_color_manual(
+    values = c(
+      hex(HSV(  4,   0.56,    0.97)),
+      hex(HSV(138,      1,    0.73)),
+      hex(HSV(218,   0.62,       1))
+    )
+  ) +
+* scale_color_manual(
+*   values = c(
+*     hex(HSV(  0,      1,       1)),
+*     hex(HSV(120,      1,       1)),
+*     hex(HSV(210,      1,       1))
+*   )
+* )
+```
+]
+ 
+.panel2-colors1-auto[
+![](P_lab_ggplot2_files/figure-html/colors1_auto_07_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-colors1-auto[
+
+```r
+state_election_plot_C +
+  theme(panel.background = element_rect(fill = NA)) +
+  theme(legend.background = element_rect(fill = NA)) +
+  theme(axis.line = element_line()) +
+  scale_color_manual(
+    values = c("#F8766D", "#00BA38", "#619CFF")
+  ) +
+  scale_color_manual(
+    values = c(
+      hex(HSV(  4,   0.56,    0.97)),
+      hex(HSV(138,      1,    0.73)),
+      hex(HSV(218,   0.62,       1))
+    )
+  ) +
+  scale_color_manual(
+    values = c(
+      hex(HSV(  0,      1,       1)),
+      hex(HSV(120,      1,       1)),
+      hex(HSV(210,      1,       1))
+    )
+  ) +
+* scale_color_manual(
+*   values = c(
+*     hex(HSV( 42,   0.56,    0.84)),
+*     hex(HSV(133,   0.17,    0.57)),
+*     hex(HSV(205,   0.75,    0.51))
+*   )
+* )
+```
+]
+ 
+.panel2-colors1-auto[
+![](P_lab_ggplot2_files/figure-html/colors1_auto_08_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-colors1-auto[
+
+```r
+state_election_plot_C +
+  theme(panel.background = element_rect(fill = NA)) +
+  theme(legend.background = element_rect(fill = NA)) +
+  theme(axis.line = element_line()) +
+  scale_color_manual(
+    values = c("#F8766D", "#00BA38", "#619CFF")
+  ) +
+  scale_color_manual(
+    values = c(
+      hex(HSV(  4,   0.56,    0.97)),
+      hex(HSV(138,      1,    0.73)),
+      hex(HSV(218,   0.62,       1))
+    )
+  ) +
+  scale_color_manual(
+    values = c(
+      hex(HSV(  0,      1,       1)),
+      hex(HSV(120,      1,       1)),
+      hex(HSV(210,      1,       1))
+    )
+  ) +
+  scale_color_manual(
+    values = c(
+      hex(HSV( 42,   0.56,    0.84)),
+      hex(HSV(133,   0.17,    0.57)),
+      hex(HSV(205,   0.75,    0.51))
+    )
+  ) +
+* scale_color_manual(
+*   values = c("#D6B25E", "#79917E", "#215982")
+* )
+```
+]
+ 
+.panel2-colors1-auto[
+![](P_lab_ggplot2_files/figure-html/colors1_auto_09_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-colors1-auto[
+
+```r
+state_election_plot_C +
+  theme(panel.background = element_rect(fill = NA)) +
+  theme(legend.background = element_rect(fill = NA)) +
+  theme(axis.line = element_line()) +
+  scale_color_manual(
+    values = c("#F8766D", "#00BA38", "#619CFF")
+  ) +
+  scale_color_manual(
+    values = c(
+      hex(HSV(  4,   0.56,    0.97)),
+      hex(HSV(138,      1,    0.73)),
+      hex(HSV(218,   0.62,       1))
+    )
+  ) +
+  scale_color_manual(
+    values = c(
+      hex(HSV(  0,      1,       1)),
+      hex(HSV(120,      1,       1)),
+      hex(HSV(210,      1,       1))
+    )
+  ) +
+  scale_color_manual(
+    values = c(
+      hex(HSV( 42,   0.56,    0.84)),
+      hex(HSV(133,   0.17,    0.57)),
+      hex(HSV(205,   0.75,    0.51))
+    )
+  ) +
+  scale_color_manual(
+    values = c("#D6B25E", "#79917E", "#215982")
+  ) +
+* geom_line(size = 1.5)
+```
+]
+ 
+.panel2-colors1-auto[
+![](P_lab_ggplot2_files/figure-html/colors1_auto_10_output-1.png)&lt;!-- --&gt;
+]
+
+&lt;style&gt;
+.panel1-colors1-auto {
+  color: black;
+  width: 39.2%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-colors1-auto {
+  color: black;
+  width: 58.8%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-colors1-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+---
+
+
+```r
+library(colorBlindness)
+```
+
+&lt;br&gt;
+
+&lt;img src="P_lab_ggplot2_files/CBplot.png" width="850px" style="display: block; margin: auto;" /&gt;
+
+
+
+
+---
+
+
+
+
+count: false
+ 
+
+.panel1-themes-rotate[
+
+```r
+state_election_plot_C +
+  theme(panel.background = element_rect(fill = NA)) +
+  theme(legend.background = element_rect(fill = NA)) +
+  theme(axis.line = element_line()) +
+  geom_line(size = 1.5) +
+* ggthemes::scale_color_colorblind()
+```
+]
+ 
+.panel2-themes-rotate[
+![](P_lab_ggplot2_files/figure-html/themes_rotate_01_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-themes-rotate[
+
+```r
+state_election_plot_C +
+  theme(panel.background = element_rect(fill = NA)) +
+  theme(legend.background = element_rect(fill = NA)) +
+  theme(axis.line = element_line()) +
+  geom_line(size = 1.5) +
+* nord::scale_color_nord(palette = "aurora", discrete = TRUE)
+```
+]
+ 
+.panel2-themes-rotate[
+![](P_lab_ggplot2_files/figure-html/themes_rotate_02_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-themes-rotate[
+
+```r
+state_election_plot_C +
+  theme(panel.background = element_rect(fill = NA)) +
+  theme(legend.background = element_rect(fill = NA)) +
+  theme(axis.line = element_line()) +
+  geom_line(size = 1.5) +
+* ggsci::scale_color_simpsons()
+```
+]
+ 
+.panel2-themes-rotate[
+![](P_lab_ggplot2_files/figure-html/themes_rotate_03_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-themes-rotate[
+
+```r
+state_election_plot_C +
+  theme(panel.background = element_rect(fill = NA)) +
+  theme(legend.background = element_rect(fill = NA)) +
+  theme(axis.line = element_line()) +
+  geom_line(size = 1.5) +
+* ghibli::scale_color_ghibli_d("SpiritedDark", direction = -1)
+```
+]
+ 
+.panel2-themes-rotate[
+![](P_lab_ggplot2_files/figure-html/themes_rotate_04_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-themes-rotate[
+
+```r
+state_election_plot_C +
+  theme(panel.background = element_rect(fill = NA)) +
+  theme(legend.background = element_rect(fill = NA)) +
+  theme(axis.line = element_line()) +
+  geom_line(size = 1.5) +
+* scale_color_manual(values = wesanderson::wes_palette("Moonrise2", 3, "discrete"))
+```
+]
+ 
+.panel2-themes-rotate[
+![](P_lab_ggplot2_files/figure-html/themes_rotate_05_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-themes-rotate[
+
+```r
+state_election_plot_C +
+  theme(panel.background = element_rect(fill = NA)) +
+  theme(legend.background = element_rect(fill = NA)) +
+  theme(axis.line = element_line()) +
+  geom_line(size = 1.5) +
+* palettetown::scale_color_poke(pokemon = "pikachu")
+```
+]
+ 
+.panel2-themes-rotate[
+![](P_lab_ggplot2_files/figure-html/themes_rotate_06_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-themes-rotate[
+
+```r
+state_election_plot_C +
+  theme(panel.background = element_rect(fill = NA)) +
+  theme(legend.background = element_rect(fill = NA)) +
+  theme(axis.line = element_line()) +
+  geom_line(size = 1.5) +
+* scale_color_manual(values = LaCroixColoR::lacroix_palette("PeachPear", 3, "discrete"))
+```
+]
+ 
+.panel2-themes-rotate[
+![](P_lab_ggplot2_files/figure-html/themes_rotate_07_output-1.png)&lt;!-- --&gt;
+]
+
+&lt;style&gt;
+.panel1-themes-rotate {
+  color: black;
+  width: 39.2%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-themes-rotate {
+  color: black;
+  width: 58.8%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-themes-rotate {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+---
+
+
+
+
+count: false
+ 
+
+.panel1-colors2-auto[
+
+```r
+*state_election_plot_C
+```
+]
+ 
+.panel2-colors2-auto[
+![](P_lab_ggplot2_files/figure-html/colors2_auto_01_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-colors2-auto[
+
+```r
+state_election_plot_C +
+* theme(
+*   panel.background = element_rect(fill = NA)
+* )
+```
+]
+ 
+.panel2-colors2-auto[
+![](P_lab_ggplot2_files/figure-html/colors2_auto_02_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-colors2-auto[
+
+```r
+state_election_plot_C +
+  theme(
+    panel.background = element_rect(fill = NA)
+  ) +
+* theme(
+*   legend.background = element_rect(fill = NA)
+* )
+```
+]
+ 
+.panel2-colors2-auto[
+![](P_lab_ggplot2_files/figure-html/colors2_auto_03_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-colors2-auto[
+
+```r
+state_election_plot_C +
+  theme(
+    panel.background = element_rect(fill = NA)
+  ) +
+  theme(
+    legend.background = element_rect(fill = NA)
+  ) +
+* theme(
+*   axis.line = element_line()
+* )
+```
+]
+ 
+.panel2-colors2-auto[
+![](P_lab_ggplot2_files/figure-html/colors2_auto_04_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-colors2-auto[
+
+```r
+state_election_plot_C +
+  theme(
+    panel.background = element_rect(fill = NA)
+  ) +
+  theme(
+    legend.background = element_rect(fill = NA)
+  ) +
+  theme(
+    axis.line = element_line()
+  ) +
+* scale_color_manual(
+*   values = c("#e1e1e1", "#e1e1e1", "#2b5e82")
+* )
+```
+]
+ 
+.panel2-colors2-auto[
+![](P_lab_ggplot2_files/figure-html/colors2_auto_05_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-colors2-auto[
+
+```r
+state_election_plot_C +
+  theme(
+    panel.background = element_rect(fill = NA)
+  ) +
+  theme(
+    legend.background = element_rect(fill = NA)
+  ) +
+  theme(
+    axis.line = element_line()
+  ) +
+  scale_color_manual(
+    values = c("#e1e1e1", "#e1e1e1", "#2b5e82")
+  ) +
+* guides(
+*   color = guide_none()
+* )
+```
+]
+ 
+.panel2-colors2-auto[
+![](P_lab_ggplot2_files/figure-html/colors2_auto_06_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-colors2-auto[
+
+```r
+state_election_plot_C +
+  theme(
+    panel.background = element_rect(fill = NA)
+  ) +
+  theme(
+    legend.background = element_rect(fill = NA)
+  ) +
+  theme(
+    axis.line = element_line()
+  ) +
+  scale_color_manual(
+    values = c("#e1e1e1", "#e1e1e1", "#2b5e82")
+  ) +
+  guides(
+    color = guide_none()
+  ) +
+* labs(subtitle = "&lt;span style='color:#2b5e82'&gt;Pennsylvania&lt;/span&gt; is a swing state! Go vote!")
+```
+]
+ 
+.panel2-colors2-auto[
+![](P_lab_ggplot2_files/figure-html/colors2_auto_07_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-colors2-auto[
+
+```r
+state_election_plot_C +
+  theme(
+    panel.background = element_rect(fill = NA)
+  ) +
+  theme(
+    legend.background = element_rect(fill = NA)
+  ) +
+  theme(
+    axis.line = element_line()
+  ) +
+  scale_color_manual(
+    values = c("#e1e1e1", "#e1e1e1", "#2b5e82")
+  ) +
+  guides(
+    color = guide_none()
+  ) +
+  labs(subtitle = "&lt;span style='color:#2b5e82'&gt;Pennsylvania&lt;/span&gt; is a swing state! Go vote!") +
+* theme(
+*   plot.subtitle = ggtext::element_markdown()
+* )
+```
+]
+ 
+.panel2-colors2-auto[
+![](P_lab_ggplot2_files/figure-html/colors2_auto_08_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-colors2-auto[
+
+```r
+state_election_plot_C +
+  theme(
+    panel.background = element_rect(fill = NA)
+  ) +
+  theme(
+    legend.background = element_rect(fill = NA)
+  ) +
+  theme(
+    axis.line = element_line()
+  ) +
+  scale_color_manual(
+    values = c("#e1e1e1", "#e1e1e1", "#2b5e82")
+  ) +
+  guides(
+    color = guide_none()
+  ) +
+  labs(subtitle = "&lt;span style='color:#2b5e82'&gt;Pennsylvania&lt;/span&gt; is a swing state! Go vote!") +
+  theme(
+    plot.subtitle = ggtext::element_markdown()
+  ) +
+* geom_line(size = 1.5)
+```
+]
+ 
+.panel2-colors2-auto[
+![](P_lab_ggplot2_files/figure-html/colors2_auto_09_output-1.png)&lt;!-- --&gt;
+]
+
+&lt;style&gt;
+.panel1-colors2-auto {
+  color: black;
+  width: 39.2%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-colors2-auto {
+  color: black;
+  width: 58.8%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-colors2-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+---
+
+count: false
+ 
+
+.panel1-colors2-rotate[
+
+```r
+state_election_plot_C +
+  theme(
+    panel.background = element_rect(fill = NA)
+  ) +
+  theme(
+    legend.background = element_rect(fill = NA)
+  ) +
+  theme(
+    axis.line = element_line()
+  ) +
+  scale_color_manual(
+    values = c("#e1e1e1", "#e1e1e1", "#2b5e82")
+  ) +
+  guides(
+    color = guide_none()
+  ) +
+* labs(subtitle = "&lt;span style='color:#0E4369'&gt;Pennsylvania&lt;/span&gt; is a swing state! Go vote!") +
+  theme(
+    plot.subtitle = ggtext::element_markdown()
+  ) +
+  geom_line(size = 1.5)
+```
+]
+ 
+.panel2-colors2-rotate[
+![](P_lab_ggplot2_files/figure-html/colors2_rotate_01_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-colors2-rotate[
+
+```r
+state_election_plot_C +
+  theme(
+    panel.background = element_rect(fill = NA)
+  ) +
+  theme(
+    legend.background = element_rect(fill = NA)
+  ) +
+  theme(
+    axis.line = element_line()
+  ) +
+  scale_color_manual(
+    values = c("#e1e1e1", "#e1e1e1", "#2b5e82")
+  ) +
+  guides(
+    color = guide_none()
+  ) +
+* labs(subtitle = "&lt;strong style='color:#0E4369'&gt;Pennsylvania&lt;/strong&gt; is a swing state! Go vote!") +
+  theme(
+    plot.subtitle = ggtext::element_markdown()
+  ) +
+  geom_line(size = 1.5)
+```
+]
+ 
+.panel2-colors2-rotate[
+![](P_lab_ggplot2_files/figure-html/colors2_rotate_02_output-1.png)&lt;!-- --&gt;
+]
+
+&lt;style&gt;
+.panel1-colors2-rotate {
+  color: black;
+  width: 39.2%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-colors2-rotate {
+  color: black;
+  width: 58.8%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-colors2-rotate {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+---
+
+#4. Colors (End!)
+
+.pull-left[
+
+
+
+
+```r
+state_election_plot_C +
+  geom_line(size = 1.5) +
+  theme(
+    panel.background = element_rect(fill = NA),
+    legend.background = element_rect(fill = NA),
+    axis.line = element_line(),
+    plot.subtitle = element_markdown()
+  ) +
+  guides(color = guide_none()) +
+  scale_color_manual(values = c("#e1e1e1", "#e1e1e1", "#2b5e82")) +
+  labs(
+    subtitle = "&lt;strong style='color:#0E4369'&gt;Pennsylvania&lt;/strong&gt;
+                is a swing state! Go vote!"
+  )
+```
+
+Save our progress!
+
+
+```r
+state_election_plot_D
+```
+
+]
+
+
+.pull-right[
+
+&lt;img src="P_lab_ggplot2_files/figure-html/colors_final-1.png" width="400px" /&gt;
+
+]
+
+
+
+---
+
+#4. Colors (Before-After)
+
+.pull-left[
+
+&lt;img src="P_lab_ggplot2_files/figure-html/unnamed-chunk-33-1.png" width="400px" /&gt;
+
+]
+
+
+.pull-right[
+
+&lt;img src="P_lab_ggplot2_files/figure-html/colors1-1.png" width="400px" /&gt;
+
+
+]
+
+---
+
+#4. Colors (Before-After)
+
+.pull-left[
+
+&lt;img src="P_lab_ggplot2_files/figure-html/unnamed-chunk-34-1.png" width="400px" /&gt;
+
+]
+
+
+.pull-right[
+
+&lt;img src="P_lab_ggplot2_files/figure-html/unnamed-chunk-35-1.png" width="400px" /&gt;
+
+
+]
+
+---
+
+class: inverse, center, middle
+
+&lt;img src="P_lab_ggplot2_files/final.gif" width="500px" /&gt;
+
+
+---
+
+
+
+count: false
+ 
+
+.panel1-final-auto[
+
+```r
+*state_election_plot
+```
+]
+ 
+.panel2-final-auto[
+![](P_lab_ggplot2_files/figure-html/final_auto_01_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-final-auto[
+
+```r
+state_election_plot +
+* theme_classic(
+*   base_family = "Roboto",
+*   base_size = 16
+* )
+```
+]
+ 
+.panel2-final-auto[
+![](P_lab_ggplot2_files/figure-html/final_auto_02_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-final-auto[
+
+```r
+state_election_plot +
+  theme_classic(
+    base_family = "Roboto",
+    base_size = 16
+  ) +
+* guides(color = guide_none())
+```
+]
+ 
+.panel2-final-auto[
+![](P_lab_ggplot2_files/figure-html/final_auto_03_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-final-auto[
+
+```r
+state_election_plot +
+  theme_classic(
+    base_family = "Roboto",
+    base_size = 16
+  ) +
+  guides(color = guide_none()) +
+* geom_line(size = 1.5)
+```
+]
+ 
+.panel2-final-auto[
+![](P_lab_ggplot2_files/figure-html/final_auto_04_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-final-auto[
+
+```r
+state_election_plot +
+  theme_classic(
+    base_family = "Roboto",
+    base_size = 16
+  ) +
+  guides(color = guide_none()) +
+  geom_line(size = 1.5) +
+* scale_color_manual(
+*   values = c("#e1e1e1", "#e1e1e1", "#2b5e82")
+* )
+```
+]
+ 
+.panel2-final-auto[
+![](P_lab_ggplot2_files/figure-html/final_auto_05_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-final-auto[
+
+```r
+state_election_plot +
+  theme_classic(
+    base_family = "Roboto",
+    base_size = 16
+  ) +
+  guides(color = guide_none()) +
+  geom_line(size = 1.5) +
+  scale_color_manual(
+    values = c("#e1e1e1", "#e1e1e1", "#2b5e82")
+  ) +
+* labs(
+*   y = NULL,
+*   x = "Election Year",
+*   title = "Percent of democrat votes by state",
+*   subtitle = "&lt;strong style='color:#0E4369'&gt;Pennsylvania&lt;/strong&gt; is a swing state! Go vote!"
+* )
+```
+]
+ 
+.panel2-final-auto[
+![](P_lab_ggplot2_files/figure-html/final_auto_06_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-final-auto[
+
+```r
+state_election_plot +
+  theme_classic(
+    base_family = "Roboto",
+    base_size = 16
+  ) +
+  guides(color = guide_none()) +
+  geom_line(size = 1.5) +
+  scale_color_manual(
+    values = c("#e1e1e1", "#e1e1e1", "#2b5e82")
+  ) +
+  labs(
+    y = NULL,
+    x = "Election Year",
+    title = "Percent of democrat votes by state",
+    subtitle = "&lt;strong style='color:#0E4369'&gt;Pennsylvania&lt;/strong&gt; is a swing state! Go vote!"
+  ) +
+* theme(
+*   plot.margin = margin(.8, 1, .7, .8, "cm"),
+*   plot.title = element_text(
+*     family = "Roboto Slab",
+*     size = 24,
+*     margin = margin(b = .3, unit = "cm")
+*   ),
+*   plot.title.position = "plot",
+*   plot.subtitle = element_markdown(
+*     margin = margin(b = .3, unit = "cm")
+*   ),
+*   axis.title.x = element_text(
+*     margin = margin(t = .5, unit = "cm")
+*   ),
+* )
+```
+]
+ 
+.panel2-final-auto[
+![](P_lab_ggplot2_files/figure-html/final_auto_07_output-1.png)&lt;!-- --&gt;
+]
+
+&lt;style&gt;
+.panel1-final-auto {
+  color: black;
+  width: 39.2%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-final-auto {
+  color: black;
+  width: 58.8%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-final-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+---
+
+class: inverse, center, middle
+
+# Showcasing
+
+---
+
+# First, save our theme!
+
+.pull-left[
+
+You can set global theme with `theme_set()` and `theme_update()`:
+
+&lt;br&gt;
+
+- `theme_set()` takes a custom theme as a argument (e.g., `theme_bw()`, `theme_classic()`, etc.)
+
+&lt;br&gt;
+
+- `theme_update()` takes individual theme elements as arguments
+
+&lt;br&gt;
+
+]
+
+
+.pull-right[
+
+
+```r
+theme_set(
+  theme_classic(
+    base_family = "Roboto",
+    base_size = 16
+  )
+)
+
+theme_update(
+  plot.margin = margin(.8, 1, .7, .8, "cm"),
+  plot.title = element_text(
+    family = "Roboto Slab",
+    size = 24,
+    margin = margin(b = .5, unit = "cm")
+  ),
+  plot.title.position = "plot",
+  axis.title.x = element_text(
+    margin = margin(t = .5, unit = "cm")
+  )
+)
+```
+
+]
+
+
+
+---
+
+class: inverse, center, middle
+
+## 1. Vowel Formant Plot
+
+
+
+
+---
+
+
+
+
+
+count: false
+ 
+
+.panel1-vowels1-auto[
+
+```r
+*sim_vowel_data
+```
+]
+ 
+.panel2-vowels1-auto[
+
+```
+  # A tibble: 300 x 3
+     Vowel    F1    F2
+     &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt;
+   1 i      371. 2431.
+   2 i      332. 2435.
+   3 i      286. 2630.
+   4 i      110. 2527.
+   5 i      302. 2315.
+   6 i      199. 2279.
+   7 i      152. 2303.
+   8 i      173. 2116.
+   9 i      258. 2540.
+  10 i      200. 2604.
+  # ... with 290 more rows
+```
+]
+
+---
+count: false
+ 
+
+.panel1-vowels1-auto[
+
+```r
+sim_vowel_data %&gt;%
+* ggplot(aes(x = F2, y = F1))
+```
+]
+ 
+.panel2-vowels1-auto[
+![](P_lab_ggplot2_files/figure-html/vowels1_auto_02_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-vowels1-auto[
+
+```r
+sim_vowel_data %&gt;%
+  ggplot(aes(x = F2, y = F1)) +
+* geom_text(aes(label = Vowel))
+```
+]
+ 
+.panel2-vowels1-auto[
+![](P_lab_ggplot2_files/figure-html/vowels1_auto_03_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-vowels1-auto[
+
+```r
+sim_vowel_data %&gt;%
+  ggplot(aes(x = F2, y = F1)) +
+  geom_text(aes(label = Vowel)) +
+* scale_x_reverse(
+*   position = "top",
+*   breaks = pretty_breaks(5)
+* )
+```
+]
+ 
+.panel2-vowels1-auto[
+![](P_lab_ggplot2_files/figure-html/vowels1_auto_04_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-vowels1-auto[
+
+```r
+sim_vowel_data %&gt;%
+  ggplot(aes(x = F2, y = F1)) +
+  geom_text(aes(label = Vowel)) +
+  scale_x_reverse(
+    position = "top",
+    breaks = pretty_breaks(5)
+  ) +
+* scale_y_reverse(position = "right")
+```
+]
+ 
+.panel2-vowels1-auto[
+![](P_lab_ggplot2_files/figure-html/vowels1_auto_05_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-vowels1-auto[
+
+```r
+sim_vowel_data %&gt;%
+  ggplot(aes(x = F2, y = F1)) +
+  geom_text(aes(label = Vowel)) +
+  scale_x_reverse(
+    position = "top",
+    breaks = pretty_breaks(5)
+  ) +
+  scale_y_reverse(position = "right") +
+* theme(
+*   plot.margin = margin(.5,.5, 1, 1, unit = "cm"),
+*   axis.title.x.top = element_text(margin = margin(b = .2, unit = "cm")),
+*   axis.title.y.right = element_text(
+*     angle = 0, vjust = 0.5, margin = margin(l = .3, unit = "cm")
+*   )
+* )
+```
+]
+ 
+.panel2-vowels1-auto[
+![](P_lab_ggplot2_files/figure-html/vowels1_auto_06_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-vowels1-auto[
+
+```r
+sim_vowel_data %&gt;%
+  ggplot(aes(x = F2, y = F1)) +
+  geom_text(aes(label = Vowel)) +
+  scale_x_reverse(
+    position = "top",
+    breaks = pretty_breaks(5)
+  ) +
+  scale_y_reverse(position = "right") +
+  theme(
+    plot.margin = margin(.5,.5, 1, 1, unit = "cm"),
+    axis.title.x.top = element_text(margin = margin(b = .2, unit = "cm")),
+    axis.title.y.right = element_text(
+      angle = 0, vjust = 0.5, margin = margin(l = .3, unit = "cm")
+    )
+  ) +
+* stat_ellipse(aes(group = Vowel))
+```
+]
+ 
+.panel2-vowels1-auto[
+![](P_lab_ggplot2_files/figure-html/vowels1_auto_07_output-1.png)&lt;!-- --&gt;
+]
+
+&lt;style&gt;
+.panel1-vowels1-auto {
+  color: black;
+  width: 39.2%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-vowels1-auto {
+  color: black;
+  width: 58.8%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-vowels1-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+class: inverse, center, middle
+
+# 2. Vowel Space Plot
+
+
+
+---
+
+
+
+count: false
+ 
+
+.panel1-vowels2-auto[
+
+```r
+*sim_vowel_data_all
+```
+]
+ 
+.panel2-vowels2-auto[
+
+```
+  # A tibble: 800 x 3
+     Vowel    F1    F2
+     &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt;
+   1 i      371. 2431.
+   2 i      332. 2435.
+   3 i      286. 2630.
+   4 i      110. 2527.
+   5 i      302. 2315.
+   6 i      199. 2279.
+   7 i      152. 2303.
+   8 i      173. 2116.
+   9 i      258. 2540.
+  10 i      200. 2604.
+  # ... with 790 more rows
+```
+]
+
+---
+count: false
+ 
+
+.panel1-vowels2-auto[
+
+```r
+sim_vowel_data_all %&gt;%
+* group_by(Vowel)
+```
+]
+ 
+.panel2-vowels2-auto[
+
+```
+  # A tibble: 800 x 3
+  # Groups:   Vowel [16]
+     Vowel    F1    F2
+     &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt;
+   1 i      371. 2431.
+   2 i      332. 2435.
+   3 i      286. 2630.
+   4 i      110. 2527.
+   5 i      302. 2315.
+   6 i      199. 2279.
+   7 i      152. 2303.
+   8 i      173. 2116.
+   9 i      258. 2540.
+  10 i      200. 2604.
+  # ... with 790 more rows
+```
+]
+
+---
+count: false
+ 
+
+.panel1-vowels2-auto[
+
+```r
+sim_vowel_data_all %&gt;%
+  group_by(Vowel) %&gt;%
+* summarize(across(c(F1, F2), mean), .groups = 'drop')
+```
+]
+ 
+.panel2-vowels2-auto[
+
+```
+  # A tibble: 16 x 3
+     Vowel    F1    F2
+     &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt;
+   1 &lt;U+0251&gt;      740.  912.
+   2 &lt;U+0252&gt;      699.  762.
+   3 &lt;U+0254&gt;      498.  748.
+   4 &lt;U+025B&gt;      606. 1905.
+   5 &lt;U+0264&gt;      466. 1300.
+   6 &lt;U+026F&gt;      305. 1400.
+   7 &lt;U+0276&gt;      852. 1532.
+   8 &lt;U+028C&gt;      603. 1165.
+   9 a      842. 1617.
+  10 e      383. 2321.
+  11 i      224. 2394.
+  12 o      332.  620.
+  13 ø      373. 1924.
+  14 œ      597. 1699.
+  15 u      266.  614.
+  16 y      235. 2099.
+```
+]
+
+---
+count: false
+ 
+
+.panel1-vowels2-auto[
+
+```r
+sim_vowel_data_all %&gt;%
+  group_by(Vowel) %&gt;%
+  summarize(across(c(F1, F2), mean), .groups = 'drop') %&gt;%
+* ggplot(aes(x = F2, y = F1))
+```
+]
+ 
+.panel2-vowels2-auto[
+![](P_lab_ggplot2_files/figure-html/vowels2_auto_04_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-vowels2-auto[
+
+```r
+sim_vowel_data_all %&gt;%
+  group_by(Vowel) %&gt;%
+  summarize(across(c(F1, F2), mean), .groups = 'drop') %&gt;%
+  ggplot(aes(x = F2, y = F1)) +
+* geom_text(aes(label = Vowel), size = 6, family = "Charis SIL")
+```
+]
+ 
+.panel2-vowels2-auto[
+![](P_lab_ggplot2_files/figure-html/vowels2_auto_05_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-vowels2-auto[
+
+```r
+sim_vowel_data_all %&gt;%
+  group_by(Vowel) %&gt;%
+  summarize(across(c(F1, F2), mean), .groups = 'drop') %&gt;%
+  ggplot(aes(x = F2, y = F1)) +
+  geom_text(aes(label = Vowel), size = 6, family = "Charis SIL") +
+* scale_x_reverse(
+*   position = "top",
+*   breaks = pretty_breaks(5),
+*   expand = expansion(.1)
+* )
+```
+]
+ 
+.panel2-vowels2-auto[
+![](P_lab_ggplot2_files/figure-html/vowels2_auto_06_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-vowels2-auto[
+
+```r
+sim_vowel_data_all %&gt;%
+  group_by(Vowel) %&gt;%
+  summarize(across(c(F1, F2), mean), .groups = 'drop') %&gt;%
+  ggplot(aes(x = F2, y = F1)) +
+  geom_text(aes(label = Vowel), size = 6, family = "Charis SIL") +
+  scale_x_reverse(
+    position = "top",
+    breaks = pretty_breaks(5),
+    expand = expansion(.1)
+  ) +
+* scale_y_reverse(
+*   position = "right",
+*   expand = expansion(.1)
+* )
+```
+]
+ 
+.panel2-vowels2-auto[
+![](P_lab_ggplot2_files/figure-html/vowels2_auto_07_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-vowels2-auto[
+
+```r
+sim_vowel_data_all %&gt;%
+  group_by(Vowel) %&gt;%
+  summarize(across(c(F1, F2), mean), .groups = 'drop') %&gt;%
+  ggplot(aes(x = F2, y = F1)) +
+  geom_text(aes(label = Vowel), size = 6, family = "Charis SIL") +
+  scale_x_reverse(
+    position = "top",
+    breaks = pretty_breaks(5),
+    expand = expansion(.1)
+  ) +
+  scale_y_reverse(
+    position = "right",
+    expand = expansion(.1)
+  ) +
+* theme(
+*   plot.margin = margin(.5,.5, 1, 1, unit = "cm"),
+*   axis.title.x.top = element_text(margin = margin(b = .2, unit = "cm")),
+*   axis.title.y.right = element_text(
+*     angle = 0, vjust = 0.5, margin = margin(l = .3, unit = "cm")
+*   )
+* )
+```
+]
+ 
+.panel2-vowels2-auto[
+![](P_lab_ggplot2_files/figure-html/vowels2_auto_08_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-vowels2-auto[
+
+```r
+sim_vowel_data_all %&gt;%
+  group_by(Vowel) %&gt;%
+  summarize(across(c(F1, F2), mean), .groups = 'drop') %&gt;%
+  ggplot(aes(x = F2, y = F1)) +
+  geom_text(aes(label = Vowel), size = 6, family = "Charis SIL") +
+  scale_x_reverse(
+    position = "top",
+    breaks = pretty_breaks(5),
+    expand = expansion(.1)
+  ) +
+  scale_y_reverse(
+    position = "right",
+    expand = expansion(.1)
+  ) +
+  theme(
+    plot.margin = margin(.5,.5, 1, 1, unit = "cm"),
+    axis.title.x.top = element_text(margin = margin(b = .2, unit = "cm")),
+    axis.title.y.right = element_text(
+      angle = 0, vjust = 0.5, margin = margin(l = .3, unit = "cm")
+    )
+  ) +
+* stat_chull(
+*   fill = NA,
+*   color = "black",
+*   linetype = 2
+* )
+```
+]
+ 
+.panel2-vowels2-auto[
+![](P_lab_ggplot2_files/figure-html/vowels2_auto_09_output-1.png)&lt;!-- --&gt;
+]
+
+&lt;style&gt;
+.panel1-vowels2-auto {
+  color: black;
+  width: 39.2%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-vowels2-auto {
+  color: black;
+  width: 58.8%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-vowels2-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+class: inverse, center, middle
+
+# 3. Bar Plot of Proportions
+
+---
+
+
+
+count: false
+ 
+
+.panel1-accuracy_bar-auto[
+
+```r
+*read_csv("https://raw.githubusercontent.com/yjunechoe/Semantic-Persistence/master/processed.csv")
+```
+]
+ 
+.panel2-accuracy_bar-auto[
+
+```
+  # A tibble: 4,516 x 10
+     Value Item    Cond   Group Subject          Time Answer Accuracy Type   logRT
+     &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;           &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;
+   1 Yes   Awaken~ Subje~ B     5cfa77e907f7dd~   917 No            0 Criti~  6.82
+   2 No    Awaken~ Subje~ B     5c1d21196036e4~  2624 No            1 Criti~  7.87
+   3 No    Awaken~ Subje~ B     5d730aab6b4b16~  2809 No            1 Criti~  7.94
+   4 No    Awaken~ Subje~ B     5ddef0fae454cd~  1587 No            1 Criti~  7.37
+   5 No    Awaken~ Subje~ B     5e7a8e8b11bf56~  1697 No            1 Criti~  7.44
+   6 No    Awaken~ Verb   A     5d4613a2da9cb6~  1484 No            1 Criti~  7.30
+   7 No    Awaken~ Verb   A     579e1e2b275be6~  1556 No            1 Criti~  7.35
+   8 No    Awaken~ Verb   A     5dfe69ed11d879~  1699 No            1 Criti~  7.44
+   9 No    Awaken~ Verb   A     5b9442cecd3808~  2159 No            1 Criti~  7.68
+  10 No    Awaken~ Verb   A     5e7f3328849917~  1132 No            1 Criti~  7.03
+  # ... with 4,506 more rows
+```
+]
+
+---
+count: false
+ 
+
+.panel1-accuracy_bar-auto[
+
+```r
+read_csv("https://raw.githubusercontent.com/yjunechoe/Semantic-Persistence/master/processed.csv") %&gt;%
+* filter(Type == "Critical")
+```
+]
+ 
+.panel2-accuracy_bar-auto[
+
+```
+  # A tibble: 1,466 x 10
+     Value Item    Cond   Group Subject          Time Answer Accuracy Type   logRT
+     &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;           &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;
+   1 Yes   Awaken~ Subje~ B     5cfa77e907f7dd~   917 No            0 Criti~  6.82
+   2 No    Awaken~ Subje~ B     5c1d21196036e4~  2624 No            1 Criti~  7.87
+   3 No    Awaken~ Subje~ B     5d730aab6b4b16~  2809 No            1 Criti~  7.94
+   4 No    Awaken~ Subje~ B     5ddef0fae454cd~  1587 No            1 Criti~  7.37
+   5 No    Awaken~ Subje~ B     5e7a8e8b11bf56~  1697 No            1 Criti~  7.44
+   6 No    Awaken~ Verb   A     5d4613a2da9cb6~  1484 No            1 Criti~  7.30
+   7 No    Awaken~ Verb   A     579e1e2b275be6~  1556 No            1 Criti~  7.35
+   8 No    Awaken~ Verb   A     5dfe69ed11d879~  1699 No            1 Criti~  7.44
+   9 No    Awaken~ Verb   A     5b9442cecd3808~  2159 No            1 Criti~  7.68
+  10 No    Awaken~ Verb   A     5e7f3328849917~  1132 No            1 Criti~  7.03
+  # ... with 1,456 more rows
+```
+]
+
+---
+count: false
+ 
+
+.panel1-accuracy_bar-auto[
+
+```r
+read_csv("https://raw.githubusercontent.com/yjunechoe/Semantic-Persistence/master/processed.csv") %&gt;%
+  filter(Type == "Critical") %&gt;%
+* group_by(Cond, Group)
+```
+]
+ 
+.panel2-accuracy_bar-auto[
+
+```
+  # A tibble: 1,466 x 10
+  # Groups:   Cond, Group [4]
+     Value Item    Cond   Group Subject          Time Answer Accuracy Type   logRT
+     &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;           &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;
+   1 Yes   Awaken~ Subje~ B     5cfa77e907f7dd~   917 No            0 Criti~  6.82
+   2 No    Awaken~ Subje~ B     5c1d21196036e4~  2624 No            1 Criti~  7.87
+   3 No    Awaken~ Subje~ B     5d730aab6b4b16~  2809 No            1 Criti~  7.94
+   4 No    Awaken~ Subje~ B     5ddef0fae454cd~  1587 No            1 Criti~  7.37
+   5 No    Awaken~ Subje~ B     5e7a8e8b11bf56~  1697 No            1 Criti~  7.44
+   6 No    Awaken~ Verb   A     5d4613a2da9cb6~  1484 No            1 Criti~  7.30
+   7 No    Awaken~ Verb   A     579e1e2b275be6~  1556 No            1 Criti~  7.35
+   8 No    Awaken~ Verb   A     5dfe69ed11d879~  1699 No            1 Criti~  7.44
+   9 No    Awaken~ Verb   A     5b9442cecd3808~  2159 No            1 Criti~  7.68
+  10 No    Awaken~ Verb   A     5e7f3328849917~  1132 No            1 Criti~  7.03
+  # ... with 1,456 more rows
+```
+]
+
+---
+count: false
+ 
+
+.panel1-accuracy_bar-auto[
+
+```r
+read_csv("https://raw.githubusercontent.com/yjunechoe/Semantic-Persistence/master/processed.csv") %&gt;%
+  filter(Type == "Critical") %&gt;%
+  group_by(Cond, Group) %&gt;%
+* summarize(Accuracy = mean(Accuracy, na.rm = TRUE), .groups = 'drop')
+```
+]
+ 
+.panel2-accuracy_bar-auto[
+
+```
+  # A tibble: 4 x 3
+    Cond    Group Accuracy
+    &lt;chr&gt;   &lt;chr&gt;    &lt;dbl&gt;
+  1 Subject A        0.875
+  2 Subject B        0.780
+  3 Verb    A        0.846
+  4 Verb    B        0.710
+```
+]
+
+---
+count: false
+ 
+
+.panel1-accuracy_bar-auto[
+
+```r
+read_csv("https://raw.githubusercontent.com/yjunechoe/Semantic-Persistence/master/processed.csv") %&gt;%
+  filter(Type == "Critical") %&gt;%
+  group_by(Cond, Group) %&gt;%
+  summarize(Accuracy = mean(Accuracy, na.rm = TRUE), .groups = 'drop') %&gt;%
+* ggplot(aes(x = Cond, y = Accuracy, fill = Group))
+```
+]
+ 
+.panel2-accuracy_bar-auto[
+![](P_lab_ggplot2_files/figure-html/accuracy_bar_auto_05_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-accuracy_bar-auto[
+
+```r
+read_csv("https://raw.githubusercontent.com/yjunechoe/Semantic-Persistence/master/processed.csv") %&gt;%
+  filter(Type == "Critical") %&gt;%
+  group_by(Cond, Group) %&gt;%
+  summarize(Accuracy = mean(Accuracy, na.rm = TRUE), .groups = 'drop') %&gt;%
+  ggplot(aes(x = Cond, y = Accuracy, fill = Group)) +
+* geom_col(position = "dodge", color = "white", width = .7, size = 2)
+```
+]
+ 
+.panel2-accuracy_bar-auto[
+![](P_lab_ggplot2_files/figure-html/accuracy_bar_auto_06_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-accuracy_bar-auto[
+
+```r
+read_csv("https://raw.githubusercontent.com/yjunechoe/Semantic-Persistence/master/processed.csv") %&gt;%
+  filter(Type == "Critical") %&gt;%
+  group_by(Cond, Group) %&gt;%
+  summarize(Accuracy = mean(Accuracy, na.rm = TRUE), .groups = 'drop') %&gt;%
+  ggplot(aes(x = Cond, y = Accuracy, fill = Group)) +
+  geom_col(position = "dodge", color = "white", width = .7, size = 2) +
+* scale_fill_manual(values = c("grey30", "grey70"))
+```
+]
+ 
+.panel2-accuracy_bar-auto[
+![](P_lab_ggplot2_files/figure-html/accuracy_bar_auto_07_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-accuracy_bar-auto[
+
+```r
+read_csv("https://raw.githubusercontent.com/yjunechoe/Semantic-Persistence/master/processed.csv") %&gt;%
+  filter(Type == "Critical") %&gt;%
+  group_by(Cond, Group) %&gt;%
+  summarize(Accuracy = mean(Accuracy, na.rm = TRUE), .groups = 'drop') %&gt;%
+  ggplot(aes(x = Cond, y = Accuracy, fill = Group)) +
+  geom_col(position = "dodge", color = "white", width = .7, size = 2) +
+  scale_fill_manual(values = c("grey30", "grey70")) +
+* labs(
+*   title = "Accuracy on Comprehension Task",
+*   x = "Pitch Accent Condition", y = NULL,
+*   fill = "Experiment Group"
+* )
+```
+]
+ 
+.panel2-accuracy_bar-auto[
+![](P_lab_ggplot2_files/figure-html/accuracy_bar_auto_08_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-accuracy_bar-auto[
+
+```r
+read_csv("https://raw.githubusercontent.com/yjunechoe/Semantic-Persistence/master/processed.csv") %&gt;%
+  filter(Type == "Critical") %&gt;%
+  group_by(Cond, Group) %&gt;%
+  summarize(Accuracy = mean(Accuracy, na.rm = TRUE), .groups = 'drop') %&gt;%
+  ggplot(aes(x = Cond, y = Accuracy, fill = Group)) +
+  geom_col(position = "dodge", color = "white", width = .7, size = 2) +
+  scale_fill_manual(values = c("grey30", "grey70")) +
+  labs(
+    title = "Accuracy on Comprehension Task",
+    x = "Pitch Accent Condition", y = NULL,
+    fill = "Experiment Group"
+  ) +
+* guides(fill = guide_legend(direction = "horizontal", title.position = "top"))
+```
+]
+ 
+.panel2-accuracy_bar-auto[
+![](P_lab_ggplot2_files/figure-html/accuracy_bar_auto_09_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-accuracy_bar-auto[
+
+```r
+read_csv("https://raw.githubusercontent.com/yjunechoe/Semantic-Persistence/master/processed.csv") %&gt;%
+  filter(Type == "Critical") %&gt;%
+  group_by(Cond, Group) %&gt;%
+  summarize(Accuracy = mean(Accuracy, na.rm = TRUE), .groups = 'drop') %&gt;%
+  ggplot(aes(x = Cond, y = Accuracy, fill = Group)) +
+  geom_col(position = "dodge", color = "white", width = .7, size = 2) +
+  scale_fill_manual(values = c("grey30", "grey70")) +
+  labs(
+    title = "Accuracy on Comprehension Task",
+    x = "Pitch Accent Condition", y = NULL,
+    fill = "Experiment Group"
+  ) +
+  guides(fill = guide_legend(direction = "horizontal", title.position = "top")) +
+* coord_capped_cart(
+*   ylim = c(0.5, 1),
+*   left = "top"
+* )
+```
+]
+ 
+.panel2-accuracy_bar-auto[
+![](P_lab_ggplot2_files/figure-html/accuracy_bar_auto_10_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-accuracy_bar-auto[
+
+```r
+read_csv("https://raw.githubusercontent.com/yjunechoe/Semantic-Persistence/master/processed.csv") %&gt;%
+  filter(Type == "Critical") %&gt;%
+  group_by(Cond, Group) %&gt;%
+  summarize(Accuracy = mean(Accuracy, na.rm = TRUE), .groups = 'drop') %&gt;%
+  ggplot(aes(x = Cond, y = Accuracy, fill = Group)) +
+  geom_col(position = "dodge", color = "white", width = .7, size = 2) +
+  scale_fill_manual(values = c("grey30", "grey70")) +
+  labs(
+    title = "Accuracy on Comprehension Task",
+    x = "Pitch Accent Condition", y = NULL,
+    fill = "Experiment Group"
+  ) +
+  guides(fill = guide_legend(direction = "horizontal", title.position = "top")) +
+  coord_capped_cart(
+    ylim = c(0.5, 1),
+    left = "top"
+  ) +
+* theme(
+*   axis.ticks.x = element_blank(),
+*   axis.text.x = element_text(color = "black", margin = margin(t = .2, unit = "cm")),
+*   legend.position = c(.3, .93),
+*   plot.title = element_text(margin = margin(b = 1, unit = "cm"))
+* )
+```
+]
+ 
+.panel2-accuracy_bar-auto[
+![](P_lab_ggplot2_files/figure-html/accuracy_bar_auto_11_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-accuracy_bar-auto[
+
+```r
+read_csv("https://raw.githubusercontent.com/yjunechoe/Semantic-Persistence/master/processed.csv") %&gt;%
+  filter(Type == "Critical") %&gt;%
+  group_by(Cond, Group) %&gt;%
+  summarize(Accuracy = mean(Accuracy, na.rm = TRUE), .groups = 'drop') %&gt;%
+  ggplot(aes(x = Cond, y = Accuracy, fill = Group)) +
+  geom_col(position = "dodge", color = "white", width = .7, size = 2) +
+  scale_fill_manual(values = c("grey30", "grey70")) +
+  labs(
+    title = "Accuracy on Comprehension Task",
+    x = "Pitch Accent Condition", y = NULL,
+    fill = "Experiment Group"
+  ) +
+  guides(fill = guide_legend(direction = "horizontal", title.position = "top")) +
+  coord_capped_cart(
+    ylim = c(0.5, 1),
+    left = "top"
+  ) +
+  theme(
+    axis.ticks.x = element_blank(),
+    axis.text.x = element_text(color = "black", margin = margin(t = .2, unit = "cm")),
+    legend.position = c(.3, .93),
+    plot.title = element_text(margin = margin(b = 1, unit = "cm"))
+  ) +
+* scale_y_continuous(
+*   expand = expansion(0, 0),
+*   labels = percent_format(accuracy = 1)
+* )
+```
+]
+ 
+.panel2-accuracy_bar-auto[
+![](P_lab_ggplot2_files/figure-html/accuracy_bar_auto_12_output-1.png)&lt;!-- --&gt;
+]
+
+&lt;style&gt;
+.panel1-accuracy_bar-auto {
+  color: black;
+  width: 39.2%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-accuracy_bar-auto {
+  color: black;
+  width: 58.8%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-accuracy_bar-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+class: inverse, center, middle
+
+# 4. Multiple Categorical Levels
+
+---
+
+class: center, middle
+
+&lt;img src="https://yjunechoe.github.io/posts/2020-09-20-plot-makeover-1/plot.png" height="500px" /&gt;
+
+Source: [Husband &amp; Patson (2020)](https://amlap2020.github.io/a/272.pdf)
+
+---
+
+.pull-left[
+
+
+```r
+df &lt;- crossing(level_1 = fct_inorder(c("Within", "Between")),
+               level_2 = fct_inorder(c("Some", "Number", "Or")),
+               level_3 = factor(c("Strong", "Weak")))
+df$barheight &lt;- c(.63, .35, .72, .55, .61, .15, .60, .55, .52, .63, .17, .16)
+
+df %&gt;% 
+  ggplot(aes(level_3, barheight)) +
+  geom_col(
+    aes(fill = level_3),
+    show.legend = FALSE
+  ) +
+  geom_errorbar(
+    aes(ymin = barheight - .05, ymax = barheight + .05),
+    width = .1) +
+  facet_grid(level_2 ~ level_1) +
+  theme_bw() +
+  scale_fill_manual(values = c('grey40', 'grey80')) +
+  ylim(0, 1) +
+  labs(
+    y = "Proportion of Strong Responses",
+    x = "Prime Type") +
+  theme_bw()
+```
+
+]
+
+.pull-right[
+
+&lt;img src="https://yjunechoe.github.io/posts/2020-09-20-plot-makeover-1/plot-makeover-1_files/figure-html5/unnamed-chunk-3-1.png" width="350px" /&gt;
+
+]
+
+---
+
+class: center, middle
+
+&lt;img src="https://yjunechoe.github.io/posts/2020-09-20-plot-makeover-1/plot-makeover-1_files/figure-html5/after_bar_plot-1.png" height="500px" /&gt;
+
+([Code](https://yjunechoe.github.io/posts/2020-09-20-plot-makeover-1/))
+
+---
+
+class: center, middle
+
+&lt;img src="https://yjunechoe.github.io/posts/2020-09-20-plot-makeover-1/plot-makeover-1_files/figure-html5/after_pointplot-1.png" height="500px" /&gt;
+
+([Code](https://yjunechoe.github.io/posts/2020-09-20-plot-makeover-1/))
+
+
+
+---
+
+class: inverse, center, middle
+
+# 5. Animations: Vowel shift
+
+---
+
+.pull-left[
+
+
+```r
+read_csv("https://raw.githubusercontent.com/bodowinter/canadian_vowel_shift_analysis/master/processed_data/production_processed.csv") %&gt;% 
+  group_by(Gender, Vowel, BirthDecade = 10 * BirthYear %/% 10) %&gt;% 
+  summarize(across(F1:F2, mean), .groups = 'drop') %&gt;% 
+  filter(Gender == "F") %&gt;% 
+  ggplot(aes(F2, F1)) +
+  geom_text(aes(1450, 615, label = as.character(BirthDecade)),
+            color = "gray80", size = 48) +
+  stat_chull(fill = NA, color = "black", linetype = 2) +
+  geom_label(aes(label = Vowel), size = 6, family = "Charis SIL") +
+  scale_x_reverse(position = "top") +
+  scale_y_reverse(position = "right") +
+  theme(
+    plot.margin = margin(.5,.8, 1.2, 1, unit = "cm"),
+    axis.title.x.top = element_text(margin = margin(b = .2, unit = "cm")),
+    axis.title.y.right = element_text(angle = 0, vjust = 0.5, margin = margin(l = .3, unit = "cm"))
+  ) +
+  coord_cartesian(clip = 'off') + 
+  labs(title = "Canadian Vowel Shift", caption = "Source: Kettig &amp; Winter (2017)") +
+  
+  transition_states(BirthDecade) +
+  shadow_mark(
+    alpha = .1,
+    color = "grey",
+    exclude_layer = c(1, 2)
+  )
+```
+
+]
+
+.pull-right[
+
+&lt;br&gt;
+&lt;br&gt;
+
+&lt;img src="P_lab_ggplot2_files/canada_vowel_shift.gif" width="500px" /&gt;
+
+]
+
+
+---
+
+class: inverse, center, middle
+
+# 5. Animations: Eye-tracking
+
+---
+
+class: center, middle
+
+&lt;div class="figure"&gt;
+&lt;img src="P_lab_ggplot2_files/eyetrack_original.png" alt="de Carvalho et al. (2017)" width="720" height="500px" /&gt;
+&lt;p class="caption"&gt;de Carvalho et al. (2017)&lt;/p&gt;
+&lt;/div&gt;
+
+---
+
+class: center, middle
+
+&lt;img src="https://yjunechoe.github.io/static/dataviz/eyetracking_anim.gif" height="500px" /&gt;
+
+([Code](https://gist.github.com/yjunechoe/b39e92889768b26faaec3e0103d4af10))
+
+
+
+
+---
+
+# Resources
+
+
+&lt;span style = "font-variant: small-caps;"&gt;light&lt;/span&gt;
+
+- [The Glamour of Graphics](https://rstudio.com/resources/rstudioconf-2020/the-glamour-of-graphics/) (20-min video)
+
+- [Gallery of plot tyes](https://www.data-to-viz.com/)
+
+- [What to consider when choosing colors for data viz](https://blog.datawrapper.de/colors/)
+
+- [Palettes (in R)](https://github.com/EmilHvitfeldt/r-color-palettes)
+
+
+&lt;span style = "font-variant: small-caps;"&gt;heavy&lt;/span&gt;
+
+- [Font Recommendations](https://practicaltypography.com/font-recommendations.html) (book chapter)
+
+- [Theme elements in ggplot2](https://ggplot2.tidyverse.org/reference/theme.html) (documentation)
+
+- [ggplot2 tutorial](https://www.youtube.com/watch?v=h29g21z0a68) (4-hour video, 2 parts)
+
+- [ggplot2 book](https://ggplot2-book.org/)
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:10",
+"highlightStyle": "solarized-light",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
