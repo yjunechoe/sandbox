@@ -17,6 +17,18 @@ editor_options:
 ---
 
 ```{css, echo = FALSE}
+@import url('https://fonts.googleapis.com/css?family=Roboto+Slab&display=swap');
+
+body {
+  font-family: Roboto Slab;
+}
+
+@media print {
+  .has-continuation {
+    display: block;
+  }
+}
+
 body {
   font-family: Adelle;
 }
@@ -206,7 +218,7 @@ The `{ggplot2}` ecosystem in R:
 .pull-right[
 
 ```{r, echo=FALSE, out.width="400px", fig.align="right"}
-knitr::include_graphics("https://d33wubrfki0l68.cloudfront.net/2c6239d311be6d037c251c71c3902792f8c4ddd2/12f67/css/images/hex/ggplot2.png")
+knitr::include_graphics("https://d33wubrfki0l68.cloudfront.net/2c6239d311be6d037c251c71c3902792f8c4ddd2/12f67/css/images/hex/ggplot2.png", error = FALSE)
 ```
 
 ]
@@ -254,7 +266,7 @@ library(gganimate)
 # The layered Grammar of Graphics
 
 ```{r, echo=FALSE, out.width="450px", fig.align="center", fig.cap="<a href='https://www.youtube.com/watch?v=h29g21z0a68'>Video Tutorial</a>"}
-knitr::include_graphics("tsg_lab_ggplot2_files/ggplot_layers.png")
+knitr::include_graphics("tsg_lab_ggplot2_files/ggplot_layers.png", error = FALSE)
 ```
 
 ---
@@ -756,7 +768,7 @@ Alternative: consider _labeling the data directly_
 class: inverse, center, middle
 
 ```{r, echo = FALSE, out.width="550px"}
-knitr::include_graphics("tsg_lab_ggplot2_files/538plots.gif")
+knitr::include_graphics("tsg_lab_ggplot2_files/538plots.gif", error = FALSE)
 ```
 
 
@@ -913,7 +925,7 @@ Colors are a double-edged sword
 class: center, middle
 
 ```{r, echo = FALSE, out.width = "600px"}
-knitr::include_graphics("https://yjunechoe.github.io/posts/2020-10-22-analysis-of-everycolorbots-tweets/HSV.png")
+knitr::include_graphics("https://yjunechoe.github.io/posts/2020-10-22-analysis-of-everycolorbots-tweets/HSV.png", error = FALSE)
 ```
 
 ---
@@ -948,7 +960,7 @@ If you must, DO:
 class: center, middle
 
 ```{r, echo = FALSE, out.width = "650px"}
-knitr::include_graphics("tsg_lab_ggplot2_files/avoid_pure_colors.png")
+knitr::include_graphics("tsg_lab_ggplot2_files/avoid_pure_colors.png", error = FALSE)
 ```
 
 <br>
@@ -960,7 +972,7 @@ source: https://blog.datawrapper.de/beautifulcolors/
 class: center, middle
 
 ```{r, echo = FALSE, out.width = "650px"}
-knitr::include_graphics("tsg_lab_ggplot2_files/combine_diff_dimensions.png")
+knitr::include_graphics("tsg_lab_ggplot2_files/combine_diff_dimensions.png", error = FALSE)
 ```
 
 <br>
@@ -1049,7 +1061,7 @@ library(colorBlindness)
 <br>
 
 ```{r, echo = FALSE, fig.align="center", out.width="850px"}
-knitr::include_graphics("tsg_lab_ggplot2_files/CBplot.png")
+knitr::include_graphics("tsg_lab_ggplot2_files/CBplot.png", error = FALSE)
 ```
 
 
@@ -1247,7 +1259,7 @@ state_election_plot_D
 class: inverse, center, middle
 
 ```{r, echo = FALSE, out.width="500px"}
-knitr::include_graphics("tsg_lab_ggplot2_files/final.gif")
+knitr::include_graphics("tsg_lab_ggplot2_files/final.gif", error = FALSE)
 ```
 
 
@@ -1652,7 +1664,7 @@ class: inverse, center, middle
 class: center, middle
 
 ```{r, echo = FALSE, out.height="500px"}
-knitr::include_graphics("https://yjunechoe.github.io/posts/2020-09-20-plot-makeover-1/plot.png")
+knitr::include_graphics("https://yjunechoe.github.io/posts/2020-09-20-plot-makeover-1/plot.png", error = FALSE)
 ```
 
 Source: [Husband & Patson (2020)](https://amlap2020.github.io/a/272.pdf)
@@ -1691,7 +1703,7 @@ df %>%
 .pull-right[
 
 ```{r, echo = FALSE, out.width="350px"}
-knitr::include_graphics("https://yjunechoe.github.io/posts/2020-09-20-plot-makeover-1/plot-makeover-1_files/figure-html5/unnamed-chunk-3-1.png")
+knitr::include_graphics("https://yjunechoe.github.io/posts/2020-09-20-plot-makeover-1/plot-makeover-1_files/figure-html5/unnamed-chunk-3-1.png", error = FALSE)
 ```
 
 ]
@@ -1701,7 +1713,7 @@ knitr::include_graphics("https://yjunechoe.github.io/posts/2020-09-20-plot-makeo
 class: center, middle
 
 ```{r, echo = FALSE, out.height="500px"}
-knitr::include_graphics("https://yjunechoe.github.io/posts/2020-09-20-plot-makeover-1/plot-makeover-1_files/figure-html5/after_bar_plot-1.png")
+knitr::include_graphics("https://yjunechoe.github.io/posts/2020-09-20-plot-makeover-1/plot-makeover-1_files/figure-html5/after_bar_plot-1.png", error = FALSE)
 ```
 
 ([Code](https://yjunechoe.github.io/posts/2020-09-20-plot-makeover-1/))
@@ -1711,7 +1723,7 @@ knitr::include_graphics("https://yjunechoe.github.io/posts/2020-09-20-plot-makeo
 class: center, middle
 
 ```{r, echo = FALSE, out.height="500px"}
-knitr::include_graphics("https://yjunechoe.github.io/posts/2020-09-20-plot-makeover-1/plot-makeover-1_files/figure-html5/after_pointplot-1.png")
+knitr::include_graphics("https://yjunechoe.github.io/posts/2020-09-20-plot-makeover-1/plot-makeover-1_files/figure-html5/after_pointplot-1.png", error = FALSE)
 ```
 
 ([Code](https://yjunechoe.github.io/posts/2020-09-20-plot-makeover-1/))
@@ -1764,7 +1776,7 @@ read_csv("https://raw.githubusercontent.com/bodowinter/canadian_vowel_shift_anal
 <br>
 
 ```{r, echo = FALSE, out.width="500px"}
-knitr::include_graphics("tsg_lab_ggplot2_files/canada_vowel_shift.gif")
+knitr::include_graphics("tsg_lab_ggplot2_files/canada_vowel_shift.gif", error = FALSE)
 ```
 
 ]
@@ -1781,7 +1793,7 @@ class: inverse, center, middle
 class: center, middle
 
 ```{r, echo = FALSE, out.height="500px", fig.cap="de Carvalho et al. (2017)"}
-knitr::include_graphics("tsg_lab_ggplot2_files/eyetrack_original.png")
+knitr::include_graphics("tsg_lab_ggplot2_files/eyetrack_original.png", error = FALSE)
 ```
 
 ---
@@ -1789,7 +1801,7 @@ knitr::include_graphics("tsg_lab_ggplot2_files/eyetrack_original.png")
 class: center, middle
 
 ```{r, echo = FALSE, out.height="500px"}
-knitr::include_graphics("https://yjunechoe.github.io/static/dataviz/eyetracking_anim.gif")
+knitr::include_graphics("https://yjunechoe.github.io/static/dataviz/eyetracking_anim.gif", error = FALSE)
 ```
 
 ([Code](https://gist.github.com/yjunechoe/b39e92889768b26faaec3e0103d4af10))
