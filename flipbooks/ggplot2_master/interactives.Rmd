@@ -1,0 +1,109 @@
+---
+title: "Interactives"
+output:
+  rmdformats::robobook:
+    self_contained: false
+---
+
+```{r setup, message=FALSE, warning = FALSE, echo = FALSE}
+library(tidyverse)
+library(scales)
+
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+
+state_election_votes <- read_csv("https://vincentarelbundock.github.io/Rdatasets/csv/pscl/presidentialElections.csv") %>% 
+  select(State = state, demVote, Year = year) %>% 
+  mutate(demVote = round(demVote/100, 2))
+
+state_election_plot <- state_election_votes %>% 
+  filter(State %in%
+    c("Pennsylvania",
+    "Illinois",
+    "California")
+  ) %>% 
+  ggplot() +
+  aes(
+    x = Year,
+    y = demVote,
+    color = State
+  ) +
+  geom_line(size = 1) +
+  scale_y_continuous(
+    labels = percent_format(accuracy = 1)
+  ) +
+  scale_x_continuous(
+    breaks = pretty_breaks(n= 5) 
+  ) +
+  labs(
+    y = "Percent of Democrat Votes",
+    title = "Go Vote!"
+  )
+
+state_election_plot_D1 <- state_election_plot + 
+  theme_classic(
+    base_family = "Open Sans",
+    base_size = 15
+  ) +
+  geom_line(size = 1.5) +
+  scale_color_manual(
+    values = c("#F2A05C", "#8C5A48", "#5C0424")
+  ) +
+  labs(
+    y = NULL,
+    x = "Election Year",
+    color = NULL,
+    title = "Percent of democrat votes by state",
+    subtitle = "We're a swing state! Go Vote!"
+  ) +
+  scale_y_continuous(
+    expand = expansion(add = c(0.02, .05)),
+    labels = percent_format(accuracy = 1)
+  ) +
+  theme(
+    legend.key = element_rect(fill = NA, color = NA),
+    legend.position = c(.45, .93),
+    legend.direction = "horizontal",
+    legend.background = element_rect(fill = NA, color = NA),
+    plot.margin = margin(.8, 1, .7, .8, "cm"),
+    plot.title = element_text(
+      family = "Roboto Slab",
+      size = 20,
+      margin = margin(b = .3, unit = "cm")
+    ),
+    plot.title.position = "plot",
+    axis.title.x = element_text(
+      margin = margin(t = .5, unit = "cm")
+    )
+  )
+```
+
+# Plotly
+
+```{r, echo = TRUE}
+library(plotly)
+ggplotly(state_election_plot_D1)
+```
+
+<br>
+
+# Highcharts
+
+```{r, echo = TRUE}
+library(highcharter)
+state_palette <- setNames(c("#F2A05C", "#8C5A48", "#5C0424"), c("California", "Illinois", "Pennsylvania"))
+state_election_votes %>% 
+  filter(State %in% c("California", "Illinois", "Pennsylvania")) %>% 
+  mutate(demVote = demVote * 100) %>% 
+  hchart("line", hcaes(x = Year, y = demVote, group = State), color = state_palette, lineWidth = 3) %>% 
+  hc_yAxis(title = list(text = ""), lineWidth = 1, lineColor = 'black', tickWidth = 1, tickColor = 'black',
+           gridLineWidth = 0, labels = list(format = '{value}%')) %>% 
+  hc_xAxis(title = list(text = ""), lineWidth = 1, lineColor = 'black', tickColor = 'black') %>% 
+  hc_legend(verticalAlign = "top", align = "center", floating = TRUE, y = 70) %>% 
+  hc_title(text = "Percent of Democrat Votes by State", align = 'left') %>% 
+  hc_subtitle(text = "We're a swing state! Go Vote!", align = 'left', style = list(color = 'black')) %>% 
+  hc_add_theme(hc_theme(
+    chart = list(plotBackgroundColor = 'white'),
+    title = list(style = list(fontFamily = "Roboto Slab", fontSize = "25px")),
+    subtitle = list(style = list(fontFamily = "Open Sans", fontSize = "16px", fontStyle = 'italic'))
+  ))
+```
