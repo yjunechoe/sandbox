@@ -22,12 +22,12 @@ class: center, middle, inverse, title-slide
 
 ---
 
+class: middle, center
 
 
 
-# The arms race
 
-&lt;div class="figure" style="text-align: center"&gt;
+&lt;div class="figure"&gt;
 &lt;img src="https://imgs.xkcd.com/comics/scientific_paper_graph_quality.png" alt="&amp;lt;a href='https://xkcd.com/1945/'&amp;gt;https://xkcd.com/1945&amp;lt;/a&amp;gt;" width="650px" height="400px" /&gt;
 &lt;p class="caption"&gt;&lt;a href='https://xkcd.com/1945/'&gt;https://xkcd.com/1945&lt;/a&gt;&lt;/p&gt;
 &lt;/div&gt;
@@ -102,15 +102,15 @@ class: center, middle, inverse, title-slide
 
 &lt;br&gt;
 
-**Showcases**
+**Showcases/tricks**
 
-- Vowel plots
+- Minimal designs
 
-- Bar plot of proportions
-
-- Multiple categorical levels
+- Plot composition
 
 - Animations
+
+- Interactivity
 
 
 ---
@@ -158,15 +158,14 @@ The `{ggplot2}` ecosystem in R:
 
 ```r
 library(extrafont)
-library(scales)
 library(colorspace)
+library(patchwork)
 library(ggtext)
-library(lemon)
-library(gganimate)
-# library(patchwork)
+library(scales)
 # library(gghighlight)
 # library(ggforce)
 # library(ggrepel)
+# library(gganimate)
 ```
 
 ]
@@ -682,7 +681,7 @@ state_election_votes %&gt;%
 
 .pull-right[
 
-**A few problems**
+**Areas of improvement**
 
 - Text is small and narrow
 
@@ -693,6 +692,12 @@ state_election_votes %&gt;%
 - Legend is off to the side on its own
 
 ]
+
+---
+
+class: inverse, center, middle
+
+# 1. Text
 
 ---
 
@@ -1200,6 +1205,12 @@ state_election_plot_A
 
 
 ]
+
+---
+
+class: inverse, center, middle
+
+# 2. Margin &amp; Spacing
 
 ---
 
@@ -1754,6 +1765,12 @@ class: inverse
 
 ---
 
+class: inverse, center, middle
+
+# 3. Legends
+
+---
+
 
 #3. Legends
 
@@ -1845,7 +1862,7 @@ count: false
 ```r
 state_election_plot_B +
 * theme(
-*   legend.key = element_rect(fill = NA)
+*   legend.key = element_rect(color = NA, fill = NA),
 * )
 ```
 ]
@@ -1863,7 +1880,7 @@ count: false
 ```r
 state_election_plot_B +
   theme(
-    legend.key = element_rect(fill = NA)
+    legend.key = element_rect(color = NA, fill = NA),
   ) +
 * theme(
 *   legend.position = c(.45, .93)
@@ -1884,7 +1901,7 @@ count: false
 ```r
 state_election_plot_B +
   theme(
-    legend.key = element_rect(fill = NA)
+    legend.key = element_rect(color = NA, fill = NA),
   ) +
   theme(
     legend.position = c(.45, .93)
@@ -1908,7 +1925,7 @@ count: false
 ```r
 state_election_plot_B +
   theme(
-    legend.key = element_rect(fill = NA)
+    legend.key = element_rect(color = NA, fill = NA),
   ) +
   theme(
     legend.position = c(.45, .93)
@@ -1935,7 +1952,7 @@ count: false
 ```r
 state_election_plot_B +
   theme(
-    legend.key = element_rect(fill = NA)
+    legend.key = element_rect(color = NA, fill = NA),
   ) +
   theme(
     legend.position = c(.45, .93)
@@ -1966,7 +1983,7 @@ count: false
 ```r
 state_election_plot_B +
   theme(
-    legend.key = element_rect(fill = NA)
+    legend.key = element_rect(color = NA, fill = NA),
   ) +
   theme(
     legend.position = c(.45, .93)
@@ -2077,6 +2094,11 @@ state_election_plot_C
 
 ]
 
+---
+
+class: inverse, center, middle
+
+# 4. Color
 
 ---
 
@@ -2093,6 +2115,26 @@ Colors are a double-edged sword
 --
 
 - Color space is complex; no "all in one" solution (RGB/hex, [HSV](https://colordesigner.io/convert/hextohsv), [HCL](http://hclwizard.org/color-scheme/))
+
+
+---
+
+
+```r
+chroma::show_col(rainbow(6))
+```
+
+&lt;img src="feb_2020_ggplot2_files/figure-html/unnamed-chunk-25-1.svg" width="400px" height="200px" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+
+```r
+specplot(rainbow(6))
+```
+
+&lt;img src="feb_2020_ggplot2_files/figure-html/unnamed-chunk-26-1.svg" width="550px" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -2114,10 +2156,11 @@ Colors are a double-edged sword
 
 .pull-right[
 
-###HCL
+### HCL
 
-&lt;video controls src="img/HCL_space.webm"&gt;
+&lt;video controls autoplay src="img/HCL_space.webm"&gt;
 ]
+
 
 ---
 
@@ -2129,13 +2172,13 @@ Colors are a double-edged sword
 - Perception can vary widely depending on reader, medium, culture, etc.
 
 
-- Color space is complex; no "all in one" solution (RGB, hex, [HSV](https://colordesigner.io/convert/hextohsv), [HCL](http://hclwizard.org/color-scheme/))
+- Color space is complex - no "all in one" solution (RGB, hex, [HSV](https://colordesigner.io/convert/hextohsv), [HCL](http://hclwizard.org/color-scheme/))
 
 --
 
 &lt;br&gt;
 
-If you must, DO:
+If you must use colors, DO:
 
 --
 
@@ -2158,17 +2201,6 @@ source: https://blog.datawrapper.de/beautifulcolors/
 
 ---
 
-&lt;h1 style='margin-bottom:0px'&gt;The curse of the rainbow&lt;/h1&gt;
-
-
-```r
-colorspace::specplot(grDevices::rainbow(7))
-```
-
-&lt;img src="feb_2020_ggplot2_files/figure-html/unnamed-chunk-26-1.svg" width="450px" height="450px" style="display: block; margin: auto;" /&gt;
-
----
-
 class: center, middle
 
 &lt;img src="tsg_lab_ggplot2_files/combine_diff_dimensions.png" width="650px" /&gt;
@@ -2183,12 +2215,12 @@ source: https://blog.datawrapper.de/beautifulcolors/
 
 
 ```r
-corr_left &lt;- ggcorrplot::ggcorrplot(cor(mtcars)) + scale_fill_gradient2(low = "blue", mid = "white", high = "red", limits = c(-1, 1))
-corr_right &lt;- ggcorrplot::ggcorrplot(cor(mtcars)) + scale_fill_continuous_diverging(palette = "Blue-Red 3", limits = c(-1, 1))
+corr_left &lt;- ggcorrplot::ggcorrplot(cor(mtcars)) + scale_fill_gradient2(low = "blue", mid = "white", high = "red", limits = c(-1, 1), guide = guide_colorbar(title = NULL, barheight = unit(15, 'lines')))
+corr_right &lt;- ggcorrplot::ggcorrplot(cor(mtcars)) + scale_fill_continuous_diverging(palette = "Blue-Red 3", limits = c(-1, 1), guide = guide_colorbar(title = NULL, barheight = unit(15, 'lines')))
 patchwork::wrap_plots(corr_left, corr_right, nrow = 1)
 ```
 
-&lt;img src="img/corr_colored.png" width="3149" style="display: block; margin: auto;" /&gt;
+&lt;img src="img/corr_colored.png" width="4008" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -2201,7 +2233,7 @@ corr_desaturated_right &lt;- cowplot::ggdraw(colorblindr::edit_colors(corr_right
 patchwork::wrap_plots(corr_desaturated_left, corr_desaturated_right, nrow = 1)
 ```
 
-&lt;img src="img/corr_desaturated.png" width="3149" style="display: block; margin: auto;" /&gt;
+&lt;img src="img/corr_desaturated.png" width="3987" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -2213,7 +2245,7 @@ palette_left &lt;- scales::div_gradient_pal(low = "blue", mid = "white", high = 
 palette_right &lt;- colorspace::diverge_hcl(7, palette = "Blue-Red 3")
 ```
 
-&lt;img src="feb_2020_ggplot2_files/figure-html/unnamed-chunk-33-1.svg" width="50%" height="400px" /&gt;&lt;img src="feb_2020_ggplot2_files/figure-html/unnamed-chunk-33-2.svg" width="50%" height="400px" /&gt;
+&lt;img src="feb_2020_ggplot2_files/figure-html/unnamed-chunk-34-1.svg" width="50%" height="400px" /&gt;&lt;img src="feb_2020_ggplot2_files/figure-html/unnamed-chunk-34-2.svg" width="50%" height="400px" /&gt;
 
 ---
 
@@ -2620,7 +2652,6 @@ count: false
 .panel1-themes-rotate[
 
 ```r
-state_election_plot_C$layers &lt;- NULL
 state_election_plot_C +
   theme(panel.background = element_rect(fill = NA)) +
   theme(legend.background = element_rect(fill = NA)) +
@@ -2641,7 +2672,6 @@ count: false
 .panel1-themes-rotate[
 
 ```r
-state_election_plot_C$layers &lt;- NULL
 state_election_plot_C +
   theme(panel.background = element_rect(fill = NA)) +
   theme(legend.background = element_rect(fill = NA)) +
@@ -2662,7 +2692,6 @@ count: false
 .panel1-themes-rotate[
 
 ```r
-state_election_plot_C$layers &lt;- NULL
 state_election_plot_C +
   theme(panel.background = element_rect(fill = NA)) +
   theme(legend.background = element_rect(fill = NA)) +
@@ -2683,7 +2712,6 @@ count: false
 .panel1-themes-rotate[
 
 ```r
-state_election_plot_C$layers &lt;- NULL
 state_election_plot_C +
   theme(panel.background = element_rect(fill = NA)) +
   theme(legend.background = element_rect(fill = NA)) +
@@ -2704,7 +2732,6 @@ count: false
 .panel1-themes-rotate[
 
 ```r
-state_election_plot_C$layers &lt;- NULL
 state_election_plot_C +
   theme(panel.background = element_rect(fill = NA)) +
   theme(legend.background = element_rect(fill = NA)) +
@@ -2725,7 +2752,6 @@ count: false
 .panel1-themes-rotate[
 
 ```r
-state_election_plot_C$layers &lt;- NULL
 state_election_plot_C +
   theme(panel.background = element_rect(fill = NA)) +
   theme(legend.background = element_rect(fill = NA)) +
@@ -2746,7 +2772,6 @@ count: false
 .panel1-themes-rotate[
 
 ```r
-state_election_plot_C$layers &lt;- NULL
 state_election_plot_C +
   theme(panel.background = element_rect(fill = NA)) +
   theme(legend.background = element_rect(fill = NA)) +
@@ -3262,7 +3287,45 @@ state_election_plot_C +
 
 ---
 
-#4. Colors (End!)
+#4. Colors v.1 (End!)
+
+.pull-left[
+
+
+
+
+```r
+state_election_plot_C +
+  geom_line(size = 1.5) +
+  theme(
+    panel.background = element_rect(fill = NA),
+    legend.background = element_rect(fill = NA),
+    axis.line = element_line()
+  ) +
+  scale_color_manual(
+    values = c("#F2A05C", "#8C5A48", "#5C0424")
+  )
+```
+
+Save our progress!
+
+
+```r
+state_election_plot_D1
+```
+
+]
+
+
+.pull-right[
+
+&lt;img src="feb_2020_ggplot2_files/figure-html/colors_final1-1.png" width="400px" /&gt;
+
+]
+
+---
+
+#4. Colors v.2 (End!)
 
 .pull-left[
 
@@ -3290,7 +3353,7 @@ Save our progress!
 
 
 ```r
-state_election_plot_D
+state_election_plot_D2
 ```
 
 ]
@@ -3298,7 +3361,7 @@ state_election_plot_D
 
 .pull-right[
 
-&lt;img src="feb_2020_ggplot2_files/figure-html/colors_final-1.png" width="400px" /&gt;
+&lt;img src="feb_2020_ggplot2_files/figure-html/colors_final2-1.png" width="400px" /&gt;
 
 ]
 
@@ -3310,14 +3373,14 @@ state_election_plot_D
 
 .pull-left[
 
-&lt;img src="feb_2020_ggplot2_files/figure-html/unnamed-chunk-37-1.svg" width="400px" /&gt;
+&lt;img src="feb_2020_ggplot2_files/figure-html/unnamed-chunk-40-1.svg" width="400px" /&gt;
 
 ]
 
 
 .pull-right[
 
-&lt;img src="feb_2020_ggplot2_files/figure-html/unnamed-chunk-38-1.svg" width="400px" /&gt;
+&lt;img src="feb_2020_ggplot2_files/figure-html/unnamed-chunk-41-1.svg" width="400px" /&gt;
 
 
 ]
@@ -3328,19 +3391,20 @@ state_election_plot_D
 
 .pull-left[
 
-&lt;img src="feb_2020_ggplot2_files/figure-html/unnamed-chunk-39-1.svg" width="400px" /&gt;
+&lt;img src="feb_2020_ggplot2_files/figure-html/unnamed-chunk-42-1.svg" width="400px" /&gt;
 
 ]
 
 
 .pull-right[
 
-&lt;img src="feb_2020_ggplot2_files/figure-html/unnamed-chunk-40-1.png" width="400px" /&gt;
+&lt;img src="feb_2020_ggplot2_files/figure-html/unnamed-chunk-43-1.png" width="400px" /&gt;
 
 
 ]
 
 ---
+
 
 
 
@@ -3548,6 +3612,12 @@ state_election_plot +
 
 ---
 
+class: inverse, center, middle
+
+# 5(?). Plot Quality
+
+---
+
 # 5(?). Plot quality: Resolution
 
 &lt;video controls width="800" height="500"&gt;
@@ -3631,15 +3701,15 @@ invisible(dev.off())
 
 # 5(?). Plot quality: Takeaways
 
-**1. Plot =/= Image**
+**1. Plot objects are not images**
 
 
 ```r
-object.size(state_election_plot_D)
+object.size(state_election_plot_D2)
 ```
 
 ```
-  33976 bytes
+  34032 bytes
 ```
 
 ```r
@@ -3723,525 +3793,7 @@ theme_update(
 
 class: inverse, center, middle
 
-## Vowel Plots: Vowel Formants
-
-
-
-
----
-
-
-
-
-
-count: false
- 
-
-.panel1-vowels1-auto[
-
-```r
-*sim_vowel_data
-```
-]
- 
-.panel2-vowels1-auto[
-
-```
-  # A tibble: 300 x 3
-     Vowel    F1    F2
-     &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt;
-   1 i      371. 2431.
-   2 i      332. 2435.
-   3 i      286. 2630.
-   4 i      110. 2527.
-   5 i      302. 2315.
-   6 i      199. 2279.
-   7 i      152. 2303.
-   8 i      173. 2116.
-   9 i      258. 2540.
-  10 i      200. 2604.
-  # ... with 290 more rows
-```
-]
-
----
-count: false
- 
-
-.panel1-vowels1-auto[
-
-```r
-sim_vowel_data %&gt;%
-* ggplot(aes(x = F2, y = F1))
-```
-]
- 
-.panel2-vowels1-auto[
-![](feb_2020_ggplot2_files/figure-html/vowels1_auto_02_output-1.svg)&lt;!-- --&gt;
-]
-
----
-count: false
- 
-
-.panel1-vowels1-auto[
-
-```r
-sim_vowel_data %&gt;%
-  ggplot(aes(x = F2, y = F1)) +
-* geom_text(aes(label = Vowel))
-```
-]
- 
-.panel2-vowels1-auto[
-![](feb_2020_ggplot2_files/figure-html/vowels1_auto_03_output-1.svg)&lt;!-- --&gt;
-]
-
----
-count: false
- 
-
-.panel1-vowels1-auto[
-
-```r
-sim_vowel_data %&gt;%
-  ggplot(aes(x = F2, y = F1)) +
-  geom_text(aes(label = Vowel)) +
-* scale_x_reverse(
-*   position = "top",
-*   breaks = pretty_breaks(5)
-* )
-```
-]
- 
-.panel2-vowels1-auto[
-![](feb_2020_ggplot2_files/figure-html/vowels1_auto_04_output-1.svg)&lt;!-- --&gt;
-]
-
----
-count: false
- 
-
-.panel1-vowels1-auto[
-
-```r
-sim_vowel_data %&gt;%
-  ggplot(aes(x = F2, y = F1)) +
-  geom_text(aes(label = Vowel)) +
-  scale_x_reverse(
-    position = "top",
-    breaks = pretty_breaks(5)
-  ) +
-* scale_y_reverse(position = "right")
-```
-]
- 
-.panel2-vowels1-auto[
-![](feb_2020_ggplot2_files/figure-html/vowels1_auto_05_output-1.svg)&lt;!-- --&gt;
-]
-
----
-count: false
- 
-
-.panel1-vowels1-auto[
-
-```r
-sim_vowel_data %&gt;%
-  ggplot(aes(x = F2, y = F1)) +
-  geom_text(aes(label = Vowel)) +
-  scale_x_reverse(
-    position = "top",
-    breaks = pretty_breaks(5)
-  ) +
-  scale_y_reverse(position = "right") +
-* theme(
-*   plot.margin = margin(.5,.5, 1, 1, unit = "cm"),
-*   axis.title.x.top = element_text(margin = margin(b = .2, unit = "cm")),
-*   axis.title.y.right = element_text(
-*     angle = 0, vjust = 0.5, margin = margin(l = .3, unit = "cm")
-*   )
-* )
-```
-]
- 
-.panel2-vowels1-auto[
-![](feb_2020_ggplot2_files/figure-html/vowels1_auto_06_output-1.svg)&lt;!-- --&gt;
-]
-
----
-count: false
- 
-
-.panel1-vowels1-auto[
-
-```r
-sim_vowel_data %&gt;%
-  ggplot(aes(x = F2, y = F1)) +
-  geom_text(aes(label = Vowel)) +
-  scale_x_reverse(
-    position = "top",
-    breaks = pretty_breaks(5)
-  ) +
-  scale_y_reverse(position = "right") +
-  theme(
-    plot.margin = margin(.5,.5, 1, 1, unit = "cm"),
-    axis.title.x.top = element_text(margin = margin(b = .2, unit = "cm")),
-    axis.title.y.right = element_text(
-      angle = 0, vjust = 0.5, margin = margin(l = .3, unit = "cm")
-    )
-  ) +
-* stat_ellipse(aes(group = Vowel))
-```
-]
- 
-.panel2-vowels1-auto[
-![](feb_2020_ggplot2_files/figure-html/vowels1_auto_07_output-1.svg)&lt;!-- --&gt;
-]
-
-&lt;style&gt;
-.panel1-vowels1-auto {
-  color: black;
-  width: 39.2%;
-  hight: 32%;
-  float: left;
-  padding-left: 1%;
-  font-size: 80%
-}
-.panel2-vowels1-auto {
-  color: black;
-  width: 58.8%;
-  hight: 32%;
-  float: left;
-  padding-left: 1%;
-  font-size: 80%
-}
-.panel3-vowels1-auto {
-  color: black;
-  width: NA%;
-  hight: 33%;
-  float: left;
-  padding-left: 1%;
-  font-size: 80%
-}
-&lt;/style&gt;
-
-
-
-
-
----
-
-class: inverse, center, middle
-
-# Vowel Plots: Vowel Space
-
-
-
----
-
-
-
-count: false
- 
-
-.panel1-vowels2-auto[
-
-```r
-*sim_vowel_data_all
-```
-]
- 
-.panel2-vowels2-auto[
-
-```
-  # A tibble: 800 x 3
-     Vowel    F1    F2
-     &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt;
-   1 i      371. 2431.
-   2 i      332. 2435.
-   3 i      286. 2630.
-   4 i      110. 2527.
-   5 i      302. 2315.
-   6 i      199. 2279.
-   7 i      152. 2303.
-   8 i      173. 2116.
-   9 i      258. 2540.
-  10 i      200. 2604.
-  # ... with 790 more rows
-```
-]
-
----
-count: false
- 
-
-.panel1-vowels2-auto[
-
-```r
-sim_vowel_data_all %&gt;%
-* group_by(Vowel)
-```
-]
- 
-.panel2-vowels2-auto[
-
-```
-  # A tibble: 800 x 3
-  # Groups:   Vowel [16]
-     Vowel    F1    F2
-     &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt;
-   1 i      371. 2431.
-   2 i      332. 2435.
-   3 i      286. 2630.
-   4 i      110. 2527.
-   5 i      302. 2315.
-   6 i      199. 2279.
-   7 i      152. 2303.
-   8 i      173. 2116.
-   9 i      258. 2540.
-  10 i      200. 2604.
-  # ... with 790 more rows
-```
-]
-
----
-count: false
- 
-
-.panel1-vowels2-auto[
-
-```r
-sim_vowel_data_all %&gt;%
-  group_by(Vowel) %&gt;%
-* summarize(across(c(F1, F2), mean), .groups = 'drop')
-```
-]
- 
-.panel2-vowels2-auto[
-
-```
-  # A tibble: 16 x 3
-     Vowel    F1    F2
-   * &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt;
-   1 &lt;U+0251&gt;      740.  912.
-   2 &lt;U+0252&gt;      699.  762.
-   3 &lt;U+0254&gt;      498.  748.
-   4 &lt;U+025B&gt;      606. 1905.
-   5 &lt;U+0264&gt;      466. 1300.
-   6 &lt;U+026F&gt;      305. 1400.
-   7 &lt;U+0276&gt;      852. 1532.
-   8 &lt;U+028C&gt;      603. 1165.
-   9 a      842. 1617.
-  10 e      383. 2321.
-  11 i      224. 2394.
-  12 o      332.  620.
-  13 ø      373. 1924.
-  14 œ      597. 1699.
-  15 u      266.  614.
-  16 y      235. 2099.
-```
-]
-
----
-count: false
- 
-
-.panel1-vowels2-auto[
-
-```r
-sim_vowel_data_all %&gt;%
-  group_by(Vowel) %&gt;%
-  summarize(across(c(F1, F2), mean), .groups = 'drop') %&gt;%
-* ggplot(aes(x = F2, y = F1))
-```
-]
- 
-.panel2-vowels2-auto[
-![](feb_2020_ggplot2_files/figure-html/vowels2_auto_04_output-1.svg)&lt;!-- --&gt;
-]
-
----
-count: false
- 
-
-.panel1-vowels2-auto[
-
-```r
-sim_vowel_data_all %&gt;%
-  group_by(Vowel) %&gt;%
-  summarize(across(c(F1, F2), mean), .groups = 'drop') %&gt;%
-  ggplot(aes(x = F2, y = F1)) +
-* geom_text(aes(label = Vowel), size = 6, family = "Charis SIL")
-```
-]
- 
-.panel2-vowels2-auto[
-![](feb_2020_ggplot2_files/figure-html/vowels2_auto_05_output-1.svg)&lt;!-- --&gt;
-]
-
----
-count: false
- 
-
-.panel1-vowels2-auto[
-
-```r
-sim_vowel_data_all %&gt;%
-  group_by(Vowel) %&gt;%
-  summarize(across(c(F1, F2), mean), .groups = 'drop') %&gt;%
-  ggplot(aes(x = F2, y = F1)) +
-  geom_text(aes(label = Vowel), size = 6, family = "Charis SIL") +
-* scale_x_reverse(
-*   position = "top",
-*   breaks = pretty_breaks(5),
-*   expand = expansion(.1)
-* )
-```
-]
- 
-.panel2-vowels2-auto[
-![](feb_2020_ggplot2_files/figure-html/vowels2_auto_06_output-1.svg)&lt;!-- --&gt;
-]
-
----
-count: false
- 
-
-.panel1-vowels2-auto[
-
-```r
-sim_vowel_data_all %&gt;%
-  group_by(Vowel) %&gt;%
-  summarize(across(c(F1, F2), mean), .groups = 'drop') %&gt;%
-  ggplot(aes(x = F2, y = F1)) +
-  geom_text(aes(label = Vowel), size = 6, family = "Charis SIL") +
-  scale_x_reverse(
-    position = "top",
-    breaks = pretty_breaks(5),
-    expand = expansion(.1)
-  ) +
-* scale_y_reverse(
-*   position = "right",
-*   expand = expansion(.1)
-* )
-```
-]
- 
-.panel2-vowels2-auto[
-![](feb_2020_ggplot2_files/figure-html/vowels2_auto_07_output-1.svg)&lt;!-- --&gt;
-]
-
----
-count: false
- 
-
-.panel1-vowels2-auto[
-
-```r
-sim_vowel_data_all %&gt;%
-  group_by(Vowel) %&gt;%
-  summarize(across(c(F1, F2), mean), .groups = 'drop') %&gt;%
-  ggplot(aes(x = F2, y = F1)) +
-  geom_text(aes(label = Vowel), size = 6, family = "Charis SIL") +
-  scale_x_reverse(
-    position = "top",
-    breaks = pretty_breaks(5),
-    expand = expansion(.1)
-  ) +
-  scale_y_reverse(
-    position = "right",
-    expand = expansion(.1)
-  ) +
-* theme(
-*   plot.margin = margin(.5,.5, 1, 1, unit = "cm"),
-*   axis.title.x.top = element_text(margin = margin(b = .2, unit = "cm")),
-*   axis.title.y.right = element_text(
-*     angle = 0, vjust = 0.5, margin = margin(l = .3, unit = "cm")
-*   )
-* )
-```
-]
- 
-.panel2-vowels2-auto[
-![](feb_2020_ggplot2_files/figure-html/vowels2_auto_08_output-1.svg)&lt;!-- --&gt;
-]
-
----
-count: false
- 
-
-.panel1-vowels2-auto[
-
-```r
-sim_vowel_data_all %&gt;%
-  group_by(Vowel) %&gt;%
-  summarize(across(c(F1, F2), mean), .groups = 'drop') %&gt;%
-  ggplot(aes(x = F2, y = F1)) +
-  geom_text(aes(label = Vowel), size = 6, family = "Charis SIL") +
-  scale_x_reverse(
-    position = "top",
-    breaks = pretty_breaks(5),
-    expand = expansion(.1)
-  ) +
-  scale_y_reverse(
-    position = "right",
-    expand = expansion(.1)
-  ) +
-  theme(
-    plot.margin = margin(.5,.5, 1, 1, unit = "cm"),
-    axis.title.x.top = element_text(margin = margin(b = .2, unit = "cm")),
-    axis.title.y.right = element_text(
-      angle = 0, vjust = 0.5, margin = margin(l = .3, unit = "cm")
-    )
-  ) +
-* stat_chull(
-*   fill = NA,
-*   color = "black",
-*   linetype = 2
-* )
-```
-]
- 
-.panel2-vowels2-auto[
-![](feb_2020_ggplot2_files/figure-html/vowels2_auto_09_output-1.svg)&lt;!-- --&gt;
-]
-
-&lt;style&gt;
-.panel1-vowels2-auto {
-  color: black;
-  width: 39.2%;
-  hight: 32%;
-  float: left;
-  padding-left: 1%;
-  font-size: 80%
-}
-.panel2-vowels2-auto {
-  color: black;
-  width: 58.8%;
-  hight: 32%;
-  float: left;
-  padding-left: 1%;
-  font-size: 80%
-}
-.panel3-vowels2-auto {
-  color: black;
-  width: NA%;
-  hight: 33%;
-  float: left;
-  padding-left: 1%;
-  font-size: 80%
-}
-&lt;/style&gt;
-
-
-
-
----
-
-class: inverse, center, middle
-
-# Bar Plot of Proportions
+## Minimal Designs
 
 ---
 
@@ -4658,7 +4210,7 @@ p &lt;- read_csv("https://raw.githubusercontent.com/yjunechoe/Semantic-Persisten
 
 library(cowplot)
 ggdraw(p) +
-  draw_label("Accuracy", x = .125, y = .88, fontfamily = "Open Sans", size = 14, color = "#2D2D2D")
+  draw_label("Accuracy", x = .12, y = .88, fontfamily = "Open Sans", size = 14, color = "#2D2D2D")
 ```
 ]
  
@@ -4695,13 +4247,6 @@ ggdraw(p) +
 
 
 
-
----
-
-class: inverse, center, middle
-
-# Multiple Categorical Levels
-
 ---
 
 class: center, middle
@@ -4730,7 +4275,7 @@ df %&gt;%
   geom_errorbar(
     aes(ymin = barheight - .05, ymax = barheight + .05),
     width = .1) +
-  facet_grid(level_2 ~ level_1) +
+  facet_grid(level_2 ~ level_1) + #&lt;&lt;&lt;
   theme_bw() +
   scale_fill_manual(values = c('grey40', 'grey80')) +
   ylim(0, 1) +
@@ -4765,12 +4310,95 @@ class: center, middle
 ([Code](https://yjunechoe.github.io/posts/2020-09-20-plot-makeover-1/))
 
 
+---
+
+class: inverse, center, middle
+
+# Plot composition
+
+---
+
+
+
+
+
+```r
+# 3 column layout with `wrap_plots()`
+plot_list &lt;- list(state_election_plot, state_election_plot_A, state_election_plot_B,
+                  state_election_plot_C, state_election_plot_D1, state_election_plot_D2)
+patchwork::wrap_plots(plot_list, ncol = 3)
+```
+
+&lt;img src="img/patchwork_1.png" width="850px" /&gt;
+
+
+---
+
+
+```r
+# You can also use operator symbols for layout
+(plot_list[[1]] + plot_list[[2]])/plot_list[[3]]
+```
+
+&lt;img src="img/patchwork_2.png" width="9448" /&gt;
+
+---
+
+
+```r
+# Or set up a custom layout with a grid
+layout_design &lt;- "ABDE
+                  CCDE
+                  CCDF"
+wrap_plots(plot_list, design = layout_design)
+```
+
+&lt;img src="img/patchwork_3.png" width="800px" /&gt;
+
+---
+
+&lt;div style='margin-top:40px; margin-bottom:20px'&gt;
+&lt;details open&gt;
+&lt;summary&gt;Plot&lt;/summary&gt;
+&lt;img src="img/patchwork_4.png"&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+
+
+
+```r
+# A more complete example with themes and annotations
+plotter_fun &lt;- function(x) {map2(1:3, rep(list(list(rnorm(100), rnorm(100))), 3), ~ {
+  ggplot(NULL, aes(x = .y[[1]], y = .y[[2]])) +
+    list(geom_point(), geom_density2d(), geom_density_2d_filled(show.legend = FALSE))[[.x]] +
+    labs(x = NULL, y = NULL) +
+    coord_cartesian(expand = FALSE) +
+    theme_minimal()
+})}
+wrap_plots(c(plotter_fun(), plotter_fun()), ncol = 3) &amp;
+  theme(
+    plot.margin = margin(.9, .2, .2, .2, unit = 'cm'),
+    plot.tag = element_text(family = "Roboto Mono", size = 12, face = 'bold'),
+    plot.tag.position = c(.1, 1.12),
+    axis.text = element_text(color = 'black')
+  ) &amp;
+  plot_annotation(
+    title = "Plot Composition",
+    tag_levels = list(paste0("Fig.", rep(1:2, each = 3), letters[rep(1:3, 2)])),
+    theme = theme(
+      plot.title = element_text(size = 16, family = "Roboto Slab", face = 'bold',
+                                hjust = 0.5, margin = margin(b = .1, unit = 'cm')),
+      plot.margin = margin(.3, .3, .3, .3, unit = 'cm')
+    )
+  )
+```
+
 
 ---
 
 class: inverse, center, middle
 
-# Animations: Vowel shift
+# Animations
 
 ---
 
@@ -4797,6 +4425,7 @@ read_csv("https://raw.githubusercontent.com/bodowinter/canadian_vowel_shift_anal
   coord_cartesian(clip = 'off') + 
   labs(title = "Canadian Vowel Shift", caption = "Source: Kettig &amp; Winter (2017)") +
   
+  # animation components from {gganimate}
   transition_states(BirthDecade) +
   shadow_mark(
     alpha = .1,
@@ -4816,13 +4445,6 @@ read_csv("https://raw.githubusercontent.com/bodowinter/canadian_vowel_shift_anal
 
 ]
 
-
----
-
-class: inverse, center, middle
-
-# Animations: Eye-tracking
-
 ---
 
 class: center, middle
@@ -4840,8 +4462,11 @@ class: center, middle
 
 ([Code](https://gist.github.com/yjunechoe/b39e92889768b26faaec3e0103d4af10))
 
+---
 
+class: inverse, center, middle
 
+&lt;h1&gt;&lt;a href="https://yjunechoe.netlify.app/flipbooks/ggplot2_master/interactives.html" style = 'color: white'&gt;Interactivity&lt;/a&gt;&lt;/h1&gt;
 
 ---
 

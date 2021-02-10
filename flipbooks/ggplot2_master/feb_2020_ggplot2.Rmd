@@ -15,32 +15,22 @@ output:
 editor_options: 
   chunk_output_type: console
 ---
+class: middle, center
 
 ```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
 library(tidyverse)
-library(svglite)
+library(Cairo)
 library(flipbookr)
 library(xaringan)
 library(xaringanExtra)
 
-fonts <- list(
-  sans = list(
-    plain = "C:/Users/jchoe/AppData/Local/Microsoft/Windows/Fonts/OpenSans-Regular.ttf",
-    italic = "C:/Users/jchoe/AppData/Local/Microsoft/Windows/Fonts/OpenSans-Italic.ttf"
-  ),
-  serif = list(
-    plain = "C:/Users/jchoe/AppData/Local/Microsoft/Windows/Fonts/RobotoSlab-Regular.ttf"
-  )
-)
-
-knitr::opts_chunk$set(fig.width = 6, message = FALSE, warning = FALSE, comment = " ", cache = FALSE, dev = "svglite", dev.args = list(user_fonts = fonts))
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, comment = " ", cache = FALSE, dev = "CairoSVG")
 
 set.seed(1234)
 ```
 
-# The arms race
 
-```{r, echo=FALSE, out.width="650px",out.height="400px", fig.align="center", fig.cap="<a href='https://xkcd.com/1945/'>https://xkcd.com/1945</a>"}
+```{r, echo=FALSE, out.width="650px",out.height="400px", fig.cap="<a href='https://xkcd.com/1945/'>https://xkcd.com/1945</a>"}
 knitr::include_graphics("https://imgs.xkcd.com/comics/scientific_paper_graph_quality.png")
 ```
 
@@ -114,15 +104,15 @@ knitr::include_graphics("https://imgs.xkcd.com/comics/scientific_paper_graph_qua
 
 <br>
 
-**Showcases**
+**Showcases/tricks**
 
-- Vowel plots
+- Minimal designs
 
-- Bar plot of proportions
-
-- Multiple categorical levels
+- Plot composition
 
 - Animations
+
+- Interactivity
 
 
 ---
@@ -171,15 +161,14 @@ The `{ggplot2}` ecosystem in R:
 
 ```{r, message = FALSE}
 library(extrafont)
-library(scales)
 library(colorspace)
+library(patchwork)
 library(ggtext)
-library(lemon)
-library(gganimate)
-# library(patchwork)
+library(scales)
 # library(gghighlight)
 # library(ggforce)
 # library(ggrepel)
+# library(gganimate)
 ```
 
 ]
@@ -301,7 +290,7 @@ state_election_plot
 
 .pull-right[
 
-**A few problems**
+**Areas of improvement**
 
 - Text is small and narrow
 
@@ -312,6 +301,12 @@ state_election_plot
 - Legend is off to the side on its own
 
 ]
+
+---
+
+class: inverse, center, middle
+
+# 1. Text
 
 ---
 
@@ -351,14 +346,13 @@ Often times you'll likely only have access to a limited set:
 
 ---
 
-```{r text, echo = FALSE, eval = FALSE, dev = "png", dpi = 150}
+```{r text, echo = FALSE, eval = FALSE}
 state_election_plot +
   theme(text = element_text(size = 15)) +
   theme(plot.title = element_text(size = 20)) +
   theme(text = element_text(family = "Open Sans")) + #OMIT
   theme(text = element_text(family = "Adelle")) + #ROTATE
   theme(text = element_text(family = "Bitter")) + #ROTATE
-  theme(text = element_text(family = "Roboto")) + #ROTATE
   theme(text = element_text(family = "Montserrat")) + #ROTATE
   theme(text = element_text(family = "Montserrat Medium")) + #ROTATE
   theme(text = element_text(family = "xkcd")) + #ROTATE
@@ -376,7 +370,7 @@ state_election_plot +
 
 ---
 
-`r chunk_reveal("text", omit = "#OMIT", break_type = "rotate", widths = c(40, 60), chunk_options = "fig.height = 7, dev = 'png', dpi = 150, dev.args = list(type = 'cairo-png')")`
+`r chunk_reveal("text", omit = "#OMIT", break_type = "rotate", widths = c(40, 60))`
 
 ---
 
@@ -458,6 +452,12 @@ state_election_plot_A
 
 
 ]
+
+---
+
+class: inverse, center, middle
+
+# 2. Margin & Spacing
 
 ---
 
@@ -668,6 +668,12 @@ state_election_plot_B
 
 ---
 
+class: inverse, center, middle
+
+# 3. Legends
+
+---
+
 
 #3. Legends
 
@@ -739,7 +745,7 @@ But if you must have a legend, make it so that the reader is **_naturally guided
 ```{r legends2, echo = FALSE, eval = FALSE, warning = FALSE}
 state_election_plot_B +
   theme(
-    legend.key = element_rect(fill = NA)
+    legend.key = element_rect(color = NA, fill = NA),
   ) + 
   theme(
     legend.position = c(.45, .93)
@@ -768,7 +774,7 @@ state_election_plot_B +
 ```{r, echo = FALSE, message = FALSE}
 state_election_plot_C <- state_election_plot_B +
   theme(
-    legend.key = element_rect(fill = NA),
+    legend.key = element_rect(color = NA, fill = NA),
     legend.position = c(.45, .93),
     legend.direction = "horizontal",
     legend.background = element_rect(fill = "grey92")
@@ -834,6 +840,11 @@ state_election_plot_C
 
 ]
 
+---
+
+class: inverse, center, middle
+
+# 4. Color
 
 ---
 
@@ -850,6 +861,20 @@ Colors are a double-edged sword
 --
 
 - Color space is complex; no "all in one" solution (RGB/hex, [HSV](https://colordesigner.io/convert/hextohsv), [HCL](http://hclwizard.org/color-scheme/))
+
+
+---
+
+```{r, out.width = '400px', out.height = '200px', fig.align='center'}
+chroma::show_col(rainbow(6))
+```
+
+
+---
+
+```{r, out.width = '550px', fig.align='center'}
+specplot(rainbow(6))
+```
 
 ---
 
@@ -871,10 +896,11 @@ Colors are a double-edged sword
 
 .pull-right[
 
-###HCL
+### HCL
 
-<video controls src="img/HCL_space.webm">
+<video controls autoplay src="img/HCL_space.webm">
 ]
+
 
 ---
 
@@ -886,13 +912,13 @@ Colors are a double-edged sword
 - Perception can vary widely depending on reader, medium, culture, etc.
 
 
-- Color space is complex; no "all in one" solution (RGB, hex, [HSV](https://colordesigner.io/convert/hextohsv), [HCL](http://hclwizard.org/color-scheme/))
+- Color space is complex - no "all in one" solution (RGB, hex, [HSV](https://colordesigner.io/convert/hextohsv), [HCL](http://hclwizard.org/color-scheme/))
 
 --
 
 <br>
 
-If you must, DO:
+If you must use colors, DO:
 
 --
 
@@ -917,14 +943,6 @@ source: https://blog.datawrapper.de/beautifulcolors/
 
 ---
 
-<h1 style='margin-bottom:0px'>The curse of the rainbow</h1>
-
-```{r, out.height="450px", out.width="450px", fig.align='center'}
-colorspace::specplot(grDevices::rainbow(7))
-```
-
----
-
 class: center, middle
 
 ```{r, echo = FALSE, out.width = "650px"}
@@ -940,8 +958,8 @@ source: https://blog.datawrapper.de/beautifulcolors/
 # Correlation matrix example
 
 ```{r, fig.show='hide'}
-corr_left <- ggcorrplot::ggcorrplot(cor(mtcars)) + scale_fill_gradient2(low = "blue", mid = "white", high = "red", limits = c(-1, 1))
-corr_right <- ggcorrplot::ggcorrplot(cor(mtcars)) + scale_fill_continuous_diverging(palette = "Blue-Red 3", limits = c(-1, 1))
+corr_left <- ggcorrplot::ggcorrplot(cor(mtcars)) + scale_fill_gradient2(low = "blue", mid = "white", high = "red", limits = c(-1, 1), guide = guide_colorbar(title = NULL, barheight = unit(15, 'lines')))
+corr_right <- ggcorrplot::ggcorrplot(cor(mtcars)) + scale_fill_continuous_diverging(palette = "Blue-Red 3", limits = c(-1, 1), guide = guide_colorbar(title = NULL, barheight = unit(15, 'lines')))
 patchwork::wrap_plots(corr_left, corr_right, nrow = 1)
 ```
 
@@ -1052,12 +1070,11 @@ state_election_plot_C +
 ---
 
 ```{r, echo = FALSE}
-bernie <- as.raster(magick::image_read("https://raw.githubusercontent.com/nicksawhney/bernie-sits/main/bernie.png"), interpolate = TRUE)
+bernie <- as.raster(magick::image_read("img/bernie_mittens.png"), interpolate = TRUE)
 ```
 
 
 ```{r themes, echo = FALSE, eval = FALSE}
-state_election_plot_C$layers <- NULL
 state_election_plot_C +
   theme(panel.background = element_rect(fill = NA)) +
   theme(legend.background = element_rect(fill = NA)) +
@@ -1068,7 +1085,7 @@ state_election_plot_C +
   ghibli::scale_color_ghibli_d("SpiritedMedium") + #ROTATE
   scale_color_manual(values = wesanderson::wes_palette("Moonrise2", 3, "discrete")) + #ROTATE
   scale_color_manual(values = LaCroixColoR::lacroix_palette("PeachPear", 3, "discrete")) + #ROTATE
-  list(scale_color_manual(values = c("#65657F", "#855F4C", "#556760")), annotation_raster(bernie, xmin = 1990, xmax = 2016, ymin = .4, ymax = .65)) + #ROTATE
+  list(scale_color_manual(values = c("#65657F", "#855F4C", "#556760")), annotation_raster(bernie, xmin = 1986, xmax = 2016, ymin = .4, ymax = .65)) + #ROTATE
   palettetown::scale_color_poke(pokemon = "pikachu") #ROTATE
 ```
 
@@ -1156,16 +1173,65 @@ state_election_plot_C +
 
 ---
 
-`r chunk_reveal("colors2", break_type = "rotate", widths = c(40, 60))`
+`r chunk_reveal("colors2", break_type = "rotate", widths = c(40, 60), chunk_options = "dev = 'png', dev.args = list(type = 'cairo-png')")`
 
 ---
 
-#4. Colors (End!)
+#4. Colors v.1 (End!)
 
 .pull-left[
 
 ```{r, echo = FALSE, message = FALSE}
-state_election_plot_D <- state_election_plot_C +
+state_election_plot_D1 <- state_election_plot_C +
+  geom_line(size = 1.5) +
+  theme(
+    panel.background = element_rect(fill = NA),
+    legend.background = element_rect(fill = NA),
+    legend.key = element_rect(color = NA),
+    axis.line = element_line()
+  ) +
+  scale_color_manual(
+    values = c("#F2A05C", "#8C5A48", "#5C0424")
+  )
+```
+
+```{r colors_final1, eval = FALSE}
+state_election_plot_C +
+  geom_line(size = 1.5) +
+  theme(
+    panel.background = element_rect(fill = NA),
+    legend.background = element_rect(fill = NA),
+    axis.line = element_line()
+  ) +
+  scale_color_manual(
+    values = c("#F2A05C", "#8C5A48", "#5C0424")
+  )
+```
+
+Save our progress!
+
+```{r, eval = FALSE}
+state_election_plot_D1
+```
+
+]
+
+
+.pull-right[
+
+```{r colors_final1, echo = FALSE, out.width = "400px", dev = 'png', dev.args = list(type = 'cairo-png')}
+```
+
+]
+
+---
+
+#4. Colors v.2 (End!)
+
+.pull-left[
+
+```{r, echo = FALSE, message = FALSE}
+state_election_plot_D2 <- state_election_plot_C +
   geom_line(size = 1.5) +
   theme(
     panel.background = element_rect(fill = NA),
@@ -1178,7 +1244,7 @@ state_election_plot_D <- state_election_plot_C +
   labs(subtitle = "<strong style='color:#0E4369'>Pennsylvania</strong> is a swing state! Go vote!")
 ```
 
-```{r colors_final, eval = FALSE}
+```{r colors_final2, eval = FALSE}
 state_election_plot_C +
   geom_line(size = 1.5) +
   theme(
@@ -1198,7 +1264,7 @@ state_election_plot_C +
 Save our progress!
 
 ```{r, eval = FALSE}
-state_election_plot_D
+state_election_plot_D2
 ```
 
 ]
@@ -1206,7 +1272,7 @@ state_election_plot_D
 
 .pull-right[
 
-```{r colors_final, echo = FALSE, out.width = "400px"}
+```{r colors_final2, echo = FALSE, out.width = "400px", dev = 'png', dev.args = list(type = 'cairo-png')}
 ```
 
 ]
@@ -1220,7 +1286,7 @@ state_election_plot_D
 .pull-left[
 
 ```{r, echo = FALSE, out.width = "400px"}
-state_election_plot_C + geom_line()
+state_election_plot_C
 ```
 
 ]
@@ -1229,14 +1295,7 @@ state_election_plot_C + geom_line()
 .pull-right[
 
 ```{r, echo = FALSE, out.width = "400px"}
-state_election_plot_C +
-  theme(panel.background = element_rect(fill = NA)) +
-  theme(legend.background = element_rect(fill = NA)) +
-  theme(axis.line = element_line()) +
-  scale_color_manual(
-    values = c("#F2A05C", "#8C5A48", "#5C0424")
-  ) +
-  geom_line(size = 1.5)
+state_election_plot_D1
 ```
 
 
@@ -1249,7 +1308,7 @@ state_election_plot_C +
 .pull-left[
 
 ```{r, echo = FALSE, out.width = "400px"}
-state_election_plot_C + geom_line()
+state_election_plot_C
 ```
 
 ]
@@ -1257,8 +1316,8 @@ state_election_plot_C + geom_line()
 
 .pull-right[
 
-```{r, echo = FALSE, out.width = "400px"}
-state_election_plot_D
+```{r, echo = FALSE, out.width = "400px", dev = 'png', dev.args=list(type = 'cairo-png')}
+state_election_plot_D2
 ```
 
 
@@ -1266,14 +1325,6 @@ state_election_plot_D
 
 ---
 
-class: inverse, center, middle
-
-```{r, echo = FALSE, out.width="500px"}
-knitr::include_graphics("tsg_lab_ggplot2_files/final.gif")
-```
-
-
----
 
 ```{r final, echo=FALSE, eval = FALSE}
 state_election_plot + 
@@ -1309,7 +1360,13 @@ state_election_plot +
   )
 ```
 
-`r chunk_reveal("final", break_type = "auto", widths = c(40, 60))`
+`r chunk_reveal("final", break_type = "auto", widths = c(40, 60), chunk_options = "dev = 'png', dev.args = list(type = 'cairo-png')")`
+
+---
+
+class: inverse, center, middle
+
+# 5(?). Plot Quality
 
 ---
 
@@ -1402,10 +1459,10 @@ knitr::include_graphics("tsg_lab_ggplot2_files/highres_agg.png", error = FALSE)
 
 # 5(?). Plot quality: Takeaways
 
-**1. Plot =/= Image**
+**1. Plot objects are not images**
 
 ```{r}
-object.size(state_election_plot_D)
+object.size(state_election_plot_D2)
 fs::dir_info(path = "img", regexp = "point-and-click.png")$size
 ```
 
@@ -1481,133 +1538,7 @@ theme_update(
 
 class: inverse, center, middle
 
-## Vowel Plots: Vowel Formants
-
-
-```{r vowel_data, echo = FALSE}
-library(rvest)
-sim_vowel_scraped_all <- read_html('https://en.wikipedia.org/wiki/Formant') %>%
-  html_node(xpath = '/html/body/div[3]/div[3]/div[5]/div[1]/table[2]') %>%
-  html_table() %>%
-  select(1:3) %>%
-  rename_all(~c("Vowel", "F1", "F2")) %>% 
-  as_tibble()
-
-
-
-sim_vowel_data_all <- sim_vowel_scraped_all %>%
-  mutate(data = map2(F1, F2,
-                     ~ MASS::mvrnorm(
-                       50, mu = c(F1 = .x, F2 = .y),
-                       Sigma = matrix(
-                         c(80^2, 80*150*runif(1, -.5, .5),
-                           80*150*runif(1, -.5, .5), 150^2),
-                         nrow = 2)
-                     ) %>%
-                       as_tibble() %>% 
-                       modify(abs)
-        )
-  ) %>% 
-  select(-c(F1, F2)) %>% 
-  unnest(data)
-
-sim_vowel_data <- sim_vowel_data_all %>% 
-  filter(Vowel %in% c("i", "e", "ɛ", "œ", "a", "ɑ", "ʌ", "ɔ", "o", "u"))
-```
-
----
-
-
-```{r vowels1, echo = FALSE, eval=FALSE, fig.height=5, fig.width=7}
-sim_vowel_data %>% 
-  ggplot(aes(x = F2, y = F1)) +
-  geom_text(aes(label = Vowel)) +
-  scale_x_reverse(
-    position = "top",
-    breaks = pretty_breaks(5)
-  ) +
-  scale_y_reverse(position = "right") +
-  theme(
-    plot.margin = margin(.5,.5, 1, 1, unit = "cm"),
-    axis.title.x.top = element_text(margin = margin(b = .2, unit = "cm")),
-    axis.title.y.right = element_text(
-      angle = 0, vjust = 0.5, margin = margin(l = .3, unit = "cm")
-    )
-  ) +
-  stat_ellipse(aes(group = Vowel))
-```
-
-
-`r chunk_reveal("vowels1", break_type = "auto", widths = c(40, 60))`
-
-
-
----
-
-class: inverse, center, middle
-
-# Vowel Plots: Vowel Space
-
-```{r stat_chull, echo = FALSE}
-StatChull <- ggproto("StatChull", Stat,
-  compute_group = function(data, scales) {
-    data[chull(data$x, data$y), , drop = FALSE]
-  },
-  
-  required_aes = c("x", "y")
-)
-
-stat_chull <- function(mapping = NULL, data = NULL, geom = "polygon",
-                       position = "identity", na.rm = FALSE, show.legend = NA, 
-                       inherit.aes = TRUE, ...) {
-  layer(
-    stat = StatChull, data = data, mapping = mapping, geom = geom, 
-    position = position, show.legend = show.legend, inherit.aes = inherit.aes,
-    params = list(na.rm = na.rm, ...)
-  )
-}
-```
-
----
-
-```{r vowels2, echo = FALSE, eval=FALSE, dev="png", dpi = 150}
-sim_vowel_data_all %>% 
-  group_by(Vowel) %>% 
-  summarize(across(c(F1, F2), mean), .groups = 'drop') %>% 
-  ggplot(aes(x = F2, y = F1)) +
-  geom_text(aes(label = Vowel), size = 6, family = "Charis SIL") +
-  scale_x_reverse(
-    position = "top",
-    breaks = pretty_breaks(5),
-    expand = expansion(.1)
-  ) +
-  scale_y_reverse(
-    position = "right",
-    expand = expansion(.1)
-  ) +
-  theme(
-    plot.margin = margin(.5,.5, 1, 1, unit = "cm"),
-    axis.title.x.top = element_text(margin = margin(b = .2, unit = "cm")),
-    axis.title.y.right = element_text(
-      angle = 0, vjust = 0.5, margin = margin(l = .3, unit = "cm")
-    )
-  ) +
-  stat_chull(
-    fill = NA,
-    color = "black",
-    linetype = 2
-  )
-```
-
-`r chunk_reveal("vowels2", break_type = "auto", widths = c(40, 60), chunk_options = "fig.height = 7, dev = 'png', dpi = 150, dev.args = list(type = 'cairo-png')")`
-
-
-
----
-
-class: inverse, center, middle
-
-# Bar Plot of Proportions
+## Minimal Designs
 
 ---
 
@@ -1676,18 +1607,11 @@ p <- read_csv("https://raw.githubusercontent.com/yjunechoe/Semantic-Persistence/
 
 library(cowplot)
 ggdraw(p) + 
-  draw_label("Accuracy", x = .125, y = .9, fontfamily = "Open Sans", size = 14, color = "#2D2D2D") 
+  draw_label("Accuracy", x = .12, y = .88, fontfamily = "Open Sans", size = 14, color = "#2D2D2D") 
 ```
 
 
 `r chunk_reveal("accuracy_bar2", break_type = 1, widths = c(40, 60))`
-
-
----
-
-class: inverse, center, middle
-
-# Multiple Categorical Levels
 
 ---
 
@@ -1718,7 +1642,7 @@ df %>%
   geom_errorbar(
     aes(ymin = barheight - .05, ymax = barheight + .05),
     width = .1) +
-  facet_grid(level_2 ~ level_1) +
+  facet_grid(level_2 ~ level_1) + #<<<
   theme_bw() +
   scale_fill_manual(values = c('grey40', 'grey80')) +
   ylim(0, 1) +
@@ -1759,12 +1683,99 @@ knitr::include_graphics("https://yjunechoe.github.io/posts/2020-09-20-plot-makeo
 ([Code](https://yjunechoe.github.io/posts/2020-09-20-plot-makeover-1/))
 
 
+---
+
+class: inverse, center, middle
+
+# Plot composition
+
+---
+
+```{r, echo = FALSE}
+theme_set(theme_grey())
+```
+
+
+```{r, eval = FALSE}
+# 3 column layout with `wrap_plots()`
+plot_list <- list(state_election_plot, state_election_plot_A, state_election_plot_B,
+                  state_election_plot_C, state_election_plot_D1, state_election_plot_D2)
+patchwork::wrap_plots(plot_list, ncol = 3)
+```
+
+```{r, echo = FALSE, out.width = '850px'}
+knitr::include_graphics("img/patchwork_1.png", error = FALSE)
+```
+
+
+---
+
+```{r, eval = FALSE}
+# You can also use operator symbols for layout
+(plot_list[[1]] + plot_list[[2]])/plot_list[[3]]
+```
+
+```{r, echo = FALSE}
+knitr::include_graphics("img/patchwork_2.png", error = FALSE)
+```
+
+---
+
+```{r, eval = FALSE}
+# Or set up a custom layout with a grid
+layout_design <- "ABDE
+                  CCDE
+                  CCDF"
+wrap_plots(plot_list, design = layout_design)
+```
+
+```{r, echo = FALSE, out.width = '800px'}
+knitr::include_graphics("img/patchwork_3.png", error = FALSE)
+```
+
+---
+
+<div style='margin-top:40px; margin-bottom:20px'>
+<details open>
+<summary>Plot</summary>
+<img src="img/patchwork_4.png">
+</details>
+</div>
+
+
+```{r, eval = FALSE}
+# A more complete example with themes and annotations
+plotter_fun <- function(x) {map2(1:3, rep(list(list(rnorm(100), rnorm(100))), 3), ~ {
+  ggplot(NULL, aes(x = .y[[1]], y = .y[[2]])) +
+    list(geom_point(), geom_density2d(), geom_density_2d_filled(show.legend = FALSE))[[.x]] +
+    labs(x = NULL, y = NULL) +
+    coord_cartesian(expand = FALSE) +
+    theme_minimal()
+})}
+wrap_plots(c(plotter_fun(), plotter_fun()), ncol = 3) &
+  theme(
+    plot.margin = margin(.9, .2, .2, .2, unit = 'cm'),
+    plot.tag = element_text(family = "Roboto Mono", size = 12, face = 'bold'),
+    plot.tag.position = c(.1, 1.12),
+    axis.text = element_text(color = 'black')
+  ) &
+  plot_annotation(
+    title = "Plot Composition",
+    tag_levels = list(paste0("Fig.", rep(1:2, each = 3), letters[rep(1:3, 2)])),
+    theme = theme(
+      plot.title = element_text(size = 16, family = "Roboto Slab", face = 'bold',
+                                hjust = 0.5, margin = margin(b = .1, unit = 'cm')),
+      plot.margin = margin(.3, .3, .3, .3, unit = 'cm')
+    )
+  )
+```
+
 
 ---
 
 class: inverse, center, middle
 
-# Animations: Vowel shift
+# Animations
 
 ---
 
@@ -1790,6 +1801,7 @@ read_csv("https://raw.githubusercontent.com/bodowinter/canadian_vowel_shift_anal
   coord_cartesian(clip = 'off') + 
   labs(title = "Canadian Vowel Shift", caption = "Source: Kettig & Winter (2017)") +
   
+  # animation components from {gganimate}
   transition_states(BirthDecade) +
   shadow_mark(
     alpha = .1,
@@ -1811,13 +1823,6 @@ knitr::include_graphics("tsg_lab_ggplot2_files/canada_vowel_shift.gif")
 
 ]
 
-
----
-
-class: inverse, center, middle
-
-# Animations: Eye-tracking
-
 ---
 
 class: center, middle
@@ -1836,8 +1841,11 @@ knitr::include_graphics("https://yjunechoe.github.io/static/dataviz/eyetracking_
 
 ([Code](https://gist.github.com/yjunechoe/b39e92889768b26faaec3e0103d4af10))
 
+---
 
+class: inverse, center, middle
 
+<h1><a href="https://yjunechoe.netlify.app/flipbooks/ggplot2_master/interactives.html" style = 'color: white'>Interactivity</a></h1>
 
 ---
 
@@ -1864,3 +1872,27 @@ knitr::include_graphics("https://yjunechoe.github.io/static/dataviz/eyetracking_
 - [ggplot2 tutorial](https://www.youtube.com/watch?v=h29g21z0a68) (4-hour video, 2 parts)
 
 - [ggplot2 book](https://ggplot2-book.org/)
+
+
+```{r, eval = FALSE, include = FALSE}
+### WIP ###
+# Post processing - add google fonts to svg
+fonts_encoded <- map_chr(c("OpenSans-Regular.ttf", "OpenSans-Italic.ttf", "RobotoSlab-Regular.ttf"), ~ {
+  base64enc::base64encode(paste0("C:/Users/jchoe/AppData/Local/Microsoft/Windows/Fonts/", .x))
+})
+font_face <- glue::glue(
+  "@font-face {{
+    font-family: 'myfont';
+    src: url(data:font/truetype;charset=utf-8;base64,{fonts_encoded}) format('truetype');
+    font-weight: normal;
+    font-style: {c('regular', 'italic', 'regular')};
+  }}"
+)
+
+svgs <- list.files("feb_2020_ggplot2_files/figure-html/", "\\.svg$", full.names = TRUE)
+for (svg in svgs) {
+  frs::svg_googlefonts(svg, c("Open Sans", "Roboto Slab"), new_svgfile = svg)
+}
+html_file <- readChar("feb_2020_ggplot2.html", file.info("feb_2020_ggplot2.html")$size)
+```
+
