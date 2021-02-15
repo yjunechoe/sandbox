@@ -34,6 +34,15 @@ output:
   overflow: visible;
 }
 
+.elem-container {
+  float: left;
+  text-align: center;
+}
+
+.dataTables_wrapper {
+  margin: 50px;
+}
+
 </style>
 
 ### Keys
@@ -55,7 +64,6 @@ library(scales)
 library(colorspace)
 library(stringr)
 library(glue)
-library(reactable)
 
 # Read in and process data
 data_raw <- read_csv("C:/Users/jchoe/Downloads/may_fixed_encoding.txt")
@@ -72,7 +80,7 @@ df <- data_raw %>%
 # Helper function
 html_word_bar <- function(word, fill, color, padding, size, margin, tooltip, border_style) {
   stringr::str_squish(glue::glue("
-    <div style='float: left; text-align: center'>
+    <div class='elem-container'>
       <div class='tooltip'>
         <span style='margin: {margin}px; background-color: {fill};\\
           border: 1px {border_style} black; padding-left: {padding}px;\\
@@ -107,7 +115,7 @@ df_combined <- df %>%
   ungroup() %>% 
   mutate(
     border_style = ifelse(MeasurementLabel == "sp", "dotted", "solid"),
-    tooltip = glue("{round(Duration, 3) * 1000}ms{ifelse(!is.na(MeanF0), paste0(', ', round(MeanF0), 'Hz'), '')}"),
+    tooltip = glue("{round(Duration, 4) * 1000}ms{ifelse(!is.na(MeanF0), paste0(', ', round(MeanF0), 'Hz'), '')}"),
     html = html_word_bar(word, fill, color, padding, size = 3, margin = 5, tooltip, border_style)
   )
 
@@ -122,13 +130,13 @@ df_tbl_combined <- df_combined %>%
 library(DT)
 
 datatable(
-  df_tbl_combined %>% 
-    slice(1:1000),
+  df_tbl_combined,
   escape = 1:2
 )
 
 
 # Render Table (reactable)
+# library(reactable)
 # df_tbl_combined %>%
 #   reactable(
 #     groupBy = "Passage",
