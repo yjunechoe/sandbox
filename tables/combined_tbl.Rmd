@@ -49,7 +49,7 @@ output:
 
 - **Bar length** corresponds to <span style='font-variant: small-caps;'>Duration</span>, and reflects the _absolute_ durations of words/pauses. Bar length is normalized w.r.t. the longest reported duration in the data for an element, which is ~ 2,450ms long: <span style='margin-left:10px; border: 1px solid black; font-size: 3px; background-color: lightgrey; vertical-align: middle; padding-right: 150px'></span>
 
-- **Bar color** corresponds to <span style='font-variant: small-caps;'>Mean F0</span> and reflects the _relative_ mean F0 of words compared to other in the _same sentence_. The following diverging color palette is used to mark relative mean F0, where blue hues are below average and red hues are above average.
+- **Bar color** corresponds to <span style='font-variant: small-caps;'>Mean F0</span> and reflects the _relative_ mean F0 of words compared to other in the _same passage_. The following diverging color palette is used to mark relative mean F0, where blue hues are below average and red hues are above average.
 
 ```{r, echo = FALSE, out.width = '500px', out.height = '25px', out.extra= 'style = "display: block; margin: auto;"'}
 chroma::show_col(colorspace::diverge_hcl(7, palette = 'Blue-Red 2'))
@@ -105,7 +105,7 @@ df_combined <- df %>%
     padding = round(dur_scaled * 150 / 2, 1),
     word = replace(MeasurementLabel, MeasurementLabel == "sp", "&#9676;")
   ) %>% 
-  group_by(Passage, Sentence) %>% 
+  group_by(Passage) %>% # Normalize F0 by passage
   mutate(
     fill = scales::col_numeric(
       palette = colorspace::diverge_hcl(7, palette = 'Blue-Red 2'),
@@ -133,11 +133,23 @@ df_tbl_combined <- df_combined %>%
 # Render Table (DT)
 library(DT)
 df_tbl_combined %>% 
+  add_count(Passage) %>% 
+  mutate(Passage = glue("Passage {Passage} ({n})")) %>% 
+  select(-n) %>% 
   slice(1:1500) %>% 
-  datatable(escape = 1:2)
+  datatable(
+    rownames = FALSE,
+    colnames = c("Utterance" = "Label"),
+    extensions = 'RowGroup',
+    escape = 1:2,
+    options = list(
+      rowGroup = list(dataSrc = 0),
+      columnDefs = list(list(visible = FALSE, targets = 0))
+    )
+  )
 
 
-# Render Table (reactable)
+# Render Table (static reactable)
 # library(reactable)
 # df_tbl_combined %>%
 #   reactable(
