@@ -122,12 +122,13 @@ df_tbl_combined <- df_combined %>%
 library(DT)
 
 datatable(
-  df_tbl_combined,
+  df_tbl_combined %>% 
+    slice(1:100),
   escape = 1:2
 )
 
 
-# Render Table
+# Render Table (reactable)
 # df_tbl_combined %>%
 #   reactable(
 #     groupBy = "Passage",
