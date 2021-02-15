@@ -132,7 +132,7 @@ df_tbl_combined <- df_combined %>%
 library(DT)
 datatable(
   df_tbl_combined %>% 
-    slice(1:1500),
+    slice(-n()),
   escape = 1:2
 )
 
