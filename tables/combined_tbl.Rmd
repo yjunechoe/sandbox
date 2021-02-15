@@ -57,6 +57,8 @@ chroma::show_col(colorspace::diverge_hcl(7, palette = 'Blue-Red 2'))
 
 - **Silence** (sp) is marked with the unicode character &#9676;
 
+<br>
+
 ```{r tbl-code, echo = FALSE, message = FALSE, layout = 'l-screen'}
 library(dplyr)
 library(readr)
@@ -130,11 +132,9 @@ df_tbl_combined <- df_combined %>%
 
 # Render Table (DT)
 library(DT)
-datatable(
-  df_tbl_combined %>% 
-    slice(-n()),
-  escape = 1:2
-)
+df_tbl_combined %>% 
+  slice(1:1500) %>% 
+  datatable(escape = 1:2)
 
 
 # Render Table (reactable)
