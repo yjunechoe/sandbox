@@ -1,0 +1,151 @@
+---
+title: "F0, Duration Table"
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+<style>
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+ 
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -60px;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.ReactTable .rt-table {
+  overflow: visible;
+}
+
+</style>
+
+### Keys
+
+- **Bar length** corresponds to <span style='font-variant: small-caps;'>Duration</span>, and reflects the _absolute_ durations of words/pauses. Bar length is normalized w.r.t. the longest reported duration in the data for an element, which is ~ 2,450ms long: <span style='margin-left:10px; border: 1px solid black; font-size: 3px; background-color: lightgrey; vertical-align: middle; padding-right: 150px'></span>
+
+- **Bar color** corresponds to <span style='font-variant: small-caps;'>Mean F0</span> and reflects the _relative_ mean F0 of words compared to other in the _same sentence_. The following diverging color palette is used to mark relative mean F0, where blue hues are below average and red hues are above average.
+
+```{r, out.width = '500px', out.height = '25px', out.extra= 'style = "display: block; margin: auto;"'}
+chroma::show_col(colorspace::diverge_hcl(7, palette = 'Blue-Red 2'))
+```
+
+- **Silence** (sp) is marked with the unicode character &#9676;
+
+```{r tbl-code, echo = FALSE, message = FALSE, layout = 'l-screen'}
+library(dplyr)
+library(readr)
+library(scales)
+library(colorspace)
+library(stringr)
+library(glue)
+library(reactable)
+
+# Read in and process data
+data_raw <- read_csv("C:/Users/jchoe/Downloads/may_fixed_encoding.txt")
+df <- data_raw %>% 
+  mutate(
+    Duration = abs(Duration),
+    across(contains("F0"), ~ as.numeric(replace(.x, which(.x == "--undefined--"), NA))),
+    across(c(Passage, Sentence, MeasurementOrder), as.integer),
+    across(contains("F0"), ~ replace(.x, which(data_raw$MeasurementLabel == "sp"), NA))
+  ) %>% 
+  select(-Speaker)
+
+
+# Helper function
+html_word_bar <- function(word, fill, color, padding, size, margin, tooltip, border_style) {
+  stringr::str_squish(glue::glue("
+    <div style='float: left; text-align: center'>
+      <div class='tooltip'>
+        <span style='margin: {margin}px; background-color: {fill};\\
+          border: 1px {border_style} black; padding-left: {padding}px;\\
+          padding-right: {padding}px; font-size: {size}px'></span>
+        <span class='tooltiptext'>{tooltip}</span>
+      </div>
+      <br>
+      <span style='margin: {margin}px; color: {color}'>{word}</span>
+    </div>
+  "))
+}
+
+# Add styles
+df_combined <- df %>% 
+  group_by(Passage, Sentence) %>% 
+  filter(!(MeasurementOrder %in% range(MeasurementOrder) & MeasurementLabel == "sp")) %>% 
+  ungroup() %>% 
+  mutate(
+    dur_scaled = (Duration - min(Duration))/diff(range(Duration)),
+    padding = round(dur_scaled * 150 / 2, 1),
+    word = replace(MeasurementLabel, MeasurementLabel == "sp", "&#9676;")
+  ) %>% 
+  group_by(Passage, Sentence) %>% 
+  mutate(
+    fill = scales::col_numeric(
+      palette = colorspace::diverge_hcl(7, palette = 'Blue-Red 2'),
+      na.color = "white",
+      domain = MeanF0
+    )(MeanF0),
+    color = "black"
+  ) %>% 
+  ungroup() %>% 
+  mutate(
+    border_style = ifelse(MeasurementLabel == "sp", "dotted", "solid"),
+    tooltip = glue("{round(Duration, 3) * 1000}ms{ifelse(!is.na(MeanF0), paste0(', ', round(MeanF0), 'Hz'), '')}"),
+    html = html_word_bar(word, fill, color, padding, size = 3, margin = 5, tooltip, border_style)
+  )
+
+# Add tooltip and collapse
+df_tbl_combined <- df_combined %>% 
+  group_by(Passage, Sentence) %>% 
+  summarize(
+    Label = stringr::str_squish(paste(html, collapse = "")),
+    .groups = 'drop'
+  )
+
+# Render Table
+df_tbl_combined %>%
+  reactable(
+    groupBy = "Passage",
+    searchable = TRUE,
+    pagination = TRUE,
+    columns = list(
+      Passage = colDef(width = 100),
+      Sentence = colDef(width = 100),
+      Label = colDef(
+        html = TRUE,
+        style = list(overflow = "visible"), 
+        resizable = TRUE
+      )
+    ),
+    style = list(
+      margin = "100px"
+    )
+  )
+  
+```
+
+<br>
+
+## Code
+
+```{r eval = FALSE, echo = TRUE}
+<<tbl-code>>
+```
