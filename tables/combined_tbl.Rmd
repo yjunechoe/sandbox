@@ -1,8 +1,7 @@
 ---
 title: "F0, Duration Table"
 output:
-  distill::distill_article:
-    self_contained: false
+  distill::distill_article
 ---
 
 <style>
