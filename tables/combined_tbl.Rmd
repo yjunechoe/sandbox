@@ -119,23 +119,13 @@ df_tbl_combined <- df_combined %>%
     .groups = 'drop'
   )
 
-df_tbl_combined %>% 
-  reactable(
-    minRows = nrow(df_tbl_combined),
-    pagination = FALSE,
-    columns = list(
-      Passage = colDef(width = 100),
-      Sentence = colDef(width = 100),
-      Label = colDef(
-        html = TRUE,
-        style = list(overflow = "visible"), 
-        resizable = TRUE
-      )
-    ),
-    style = list(
-      margin = "100px"
-    )
-  )
+library(DT)
+
+datatable(
+  df_tbl_combined,
+  escape = 1:2
+)
+
 
 # Render Table
 # df_tbl_combined %>%
