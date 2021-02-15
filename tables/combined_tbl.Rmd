@@ -42,7 +42,7 @@ output:
 
 - **Bar color** corresponds to <span style='font-variant: small-caps;'>Mean F0</span> and reflects the _relative_ mean F0 of words compared to other in the _same sentence_. The following diverging color palette is used to mark relative mean F0, where blue hues are below average and red hues are above average.
 
-```{r, out.width = '500px', out.height = '25px', out.extra= 'style = "display: block; margin: auto;"'}
+```{r, echo = FALSE, out.width = '500px', out.height = '25px', out.extra= 'style = "display: block; margin: auto;"'}
 chroma::show_col(colorspace::diverge_hcl(7, palette = 'Blue-Red 2'))
 ```
 
@@ -119,12 +119,10 @@ df_tbl_combined <- df_combined %>%
     .groups = 'drop'
   )
 
-# Render Table
-df_tbl_combined %>%
+df_tbl_combined %>% 
   reactable(
-    groupBy = "Passage",
-    searchable = TRUE,
-    pagination = TRUE,
+    minRows = nrow(df_tbl_combined),
+    pagination = FALSE,
     columns = list(
       Passage = colDef(width = 100),
       Sentence = colDef(width = 100),
@@ -138,6 +136,26 @@ df_tbl_combined %>%
       margin = "100px"
     )
   )
+
+# Render Table
+# df_tbl_combined %>%
+#   reactable(
+#     groupBy = "Passage",
+#     searchable = TRUE,
+#     pagination = TRUE,
+#     columns = list(
+#       Passage = colDef(width = 100),
+#       Sentence = colDef(width = 100),
+#       Label = colDef(
+#         html = TRUE,
+#         style = list(overflow = "visible"), 
+#         resizable = TRUE
+#       )
+#     ),
+#     style = list(
+#       margin = "100px"
+#     )
+#   )
   
 ```
 
