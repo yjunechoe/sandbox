@@ -136,7 +136,7 @@ df_tbl_combined %>%
   add_count(Passage) %>% 
   mutate(Passage = glue("Passage {Passage} ({n})")) %>% 
   select(-n) %>% 
-  slice(1:1500) %>% 
+  slice(1:1000) %>% 
   datatable(
     rownames = FALSE,
     colnames = c("Utterance" = "Label"),
