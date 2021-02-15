@@ -123,7 +123,7 @@ library(DT)
 
 datatable(
   df_tbl_combined %>% 
-    slice(1:100),
+    slice(1:1000),
   escape = 1:2
 )
 
