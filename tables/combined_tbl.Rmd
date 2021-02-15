@@ -115,7 +115,7 @@ df_combined <- df %>%
   ungroup() %>% 
   mutate(
     border_style = ifelse(MeasurementLabel == "sp", "dotted", "solid"),
-    tooltip = glue("{round(Duration, 4) * 1000}ms{ifelse(!is.na(MeanF0), paste0(', ', round(MeanF0), 'Hz'), '')}"),
+    tooltip = glue("{round(Duration * 1000)}ms{ifelse(!is.na(MeanF0), paste0(', ', round(MeanF0), 'Hz'), '')}"),
     html = html_word_bar(word, fill, color, padding, size = 3, margin = 5, tooltip, border_style)
   )
 
@@ -127,10 +127,12 @@ df_tbl_combined <- df_combined %>%
     .groups = 'drop'
   )
 
-library(DT)
 
+# Render Table (DT)
+library(DT)
 datatable(
-  df_tbl_combined,
+  df_tbl_combined %>% 
+    slice(1:1500),
   escape = 1:2
 )
 
