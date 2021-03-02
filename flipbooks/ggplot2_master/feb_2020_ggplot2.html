@@ -5,10 +5,14 @@
     <meta charset="utf-8" />
     <meta name="author" content="  June Choe" />
     <meta name="date" content="2021-02-10" />
-    <script src="libs/header-attrs-2.6/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.7/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/hygge.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
+    <script src="libs/mark.js-8.11.1/mark.min.js"></script>
+    <link href="libs/xaringanExtra-search-0.0.1/search.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-search-0.0.1/search.js"></script>
+    <script>window.addEventListener('load', function() { window.xeSearch = new RemarkSearch({"position":"bottom-left","caseSensitive":false,"showIcon":true,"autoSearch":true}) })</script>
     <link rel="stylesheet" href="custom.css" type="text/css" />
   </head>
   <body>
@@ -136,6 +140,46 @@ The `{ggplot2}` ecosystem in R:
 &lt;img src="https://d33wubrfki0l68.cloudfront.net/2c6239d311be6d037c251c71c3902792f8c4ddd2/12f67/css/images/hex/ggplot2.png" width="400px" style="display: block; margin: auto 0 auto auto;" /&gt;
 
 ]
+
+
+---
+
+
+# Preliminaries
+
+.pull-left[
+
+The `{ggplot2}` ecosystem in R:
+
+- Easy to use and highly customizable
+
+- Tons of free resources for learning
+
+- Widely used in academia
+
+- Lots of extensions
+
+
+```r
+library(extrafont)
+library(colorspace)
+library(patchwork)
+library(ggtext)
+library(scales)
+# library(gghighlight)
+# library(ggforce)
+# library(ggrepel)
+# library(gganimate)
+```
+
+]
+
+.pull-right[
+
+&lt;img src="https://d33wubrfki0l68.cloudfront.net/2c6239d311be6d037c251c71c3902792f8c4ddd2/12f67/css/images/hex/ggplot2.png" width="400px" style="display: block; margin: auto 0 auto auto;" /&gt;
+
+]
+
 
 ---
 
@@ -3632,7 +3676,7 @@ Use better-quality, OS-independent graphic devices (works for any figure):
 library(ragg) # R interface to the AGG device - https://github.com/r-lib/ragg
 
 # Step 1: initialize device
-agg_png("highres_agg.png", width = 10, height = 6.2, units = "in", res = 300)
+agg_png("highres_agg.png", width = 10, height = 6.2, units = "in")
 
 # Step 2: plot
 plot(p)
@@ -3679,7 +3723,7 @@ fs::dir_info(path = "img", regexp = "point-and-click.png")$size
 ```
 
 ```
-  54.9K
+  43.6K
 ```
 
 
@@ -4437,7 +4481,7 @@ class: inverse, center, middle
 
 &lt;span style = "font-variant: small-caps;"&gt;light&lt;/span&gt;
 
-- [The Glamour of Graphics](https://rstudio.com/resources/rstudioconf-2020/the-glamour-of-graphics/) (20-min video)
+- [The Glamour of Graphics](https://rstudio.com/resources/rstudioconf-2020/the-glamour-of-graphics/)
 
 - [Gallery of plot types](https://www.data-to-viz.com/)
 
@@ -4448,11 +4492,11 @@ class: inverse, center, middle
 
 &lt;span style = "font-variant: small-caps;"&gt;heavy&lt;/span&gt;
 
-- [Theme elements in ggplot2](https://ggplot2.tidyverse.org/reference/theme.html) (documentation)
+- [Theme elements in ggplot2](https://ggplot2.tidyverse.org/reference/theme.html)
 
-- [Font Recommendations](https://practicaltypography.com/font-recommendations.html) (book chapter)
+- [Font Recommendations](https://practicaltypography.com/font-recommendations.html)
 
-- [ggplot2 tutorial](https://www.youtube.com/watch?v=h29g21z0a68) (4-hour video, 2 parts)
+- [ggplot2 tutorial](https://www.youtube.com/watch?v=h29g21z0a68)
 
 - [ggplot2 book](https://ggplot2-book.org/)
 

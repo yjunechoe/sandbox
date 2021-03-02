@@ -24,6 +24,8 @@ library(flipbookr)
 library(xaringan)
 library(xaringanExtra)
 
+xaringanExtra::use_search(show_icon = TRUE)
+
 knitr::opts_chunk$set(message = FALSE, warning = FALSE, comment = " ", cache = FALSE, dev = "CairoSVG")
 
 set.seed(1234)
@@ -70,7 +72,7 @@ knitr::include_graphics("https://imgs.xkcd.com/comics/scientific_paper_graph_qua
 
 --
 
-- Walk through implementations of these ideas (w/ [R code](https://raw.githubusercontent.com/yjunechoe/yjunechoe.github.io/master/flipbooks/tsg_lab_ggplot2_2020/tsg_lab_ggplot2.Rmd))
+- Walk through implementations of these ideas (w/ [R code](https://raw.githubusercontent.com/yjunechoe/sandbox/master/flipbooks/ggplot2_master/feb_2020_ggplot2.Rmd))
 
 --
 
@@ -1424,7 +1426,7 @@ Use better-quality, OS-independent graphic devices (works for any figure):
 library(ragg) # R interface to the AGG device - https://github.com/r-lib/ragg
 
 # Step 1: initialize device
-agg_png("highres_agg.png", width = 10, height = 6.2, units = "in", res = 300)
+agg_png("highres_agg.png", width = 10, height = 6.2, units = "in")
 
 # Step 2: plot
 plot(p)
@@ -1854,7 +1856,7 @@ class: inverse, center, middle
 
 <span style = "font-variant: small-caps;">light</span>
 
-- [The Glamour of Graphics](https://rstudio.com/resources/rstudioconf-2020/the-glamour-of-graphics/) (20-min video)
+- [The Glamour of Graphics](https://rstudio.com/resources/rstudioconf-2020/the-glamour-of-graphics/)
 
 - [Gallery of plot types](https://www.data-to-viz.com/)
 
@@ -1865,11 +1867,11 @@ class: inverse, center, middle
 
 <span style = "font-variant: small-caps;">heavy</span>
 
-- [Theme elements in ggplot2](https://ggplot2.tidyverse.org/reference/theme.html) (documentation)
+- [Theme elements in ggplot2](https://ggplot2.tidyverse.org/reference/theme.html)
 
-- [Font Recommendations](https://practicaltypography.com/font-recommendations.html) (book chapter)
+- [Font Recommendations](https://practicaltypography.com/font-recommendations.html)
 
-- [ggplot2 tutorial](https://www.youtube.com/watch?v=h29g21z0a68) (4-hour video, 2 parts)
+- [ggplot2 tutorial](https://www.youtube.com/watch?v=h29g21z0a68)
 
 - [ggplot2 book](https://ggplot2-book.org/)
 
