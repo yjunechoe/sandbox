@@ -5,6 +5,10 @@ body {
   font-family: Roboto;
 }
 
+.remark-slide {
+  content-visibility: auto;
+}
+
 a {
   text-decoration: underline;
   color: #23395B;
