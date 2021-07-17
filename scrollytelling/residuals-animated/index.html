@@ -25,6 +25,9 @@
 
       <section id="scrolly">
         <article>
+          <div class="step" data-step="0">
+            <p>STEP 0</p>
+          </div>
           <div class="step" data-step="1">
             <p>STEP 1</p>
           </div>
@@ -36,6 +39,15 @@
           </div>
           <div class="step" data-step="4">
             <p>STEP 4</p>
+          </div>
+          <div class="step" data-step="5">
+            <p>STEP 5</p>
+          </div>
+          <div class="step" data-step="6">
+            <p>STEP 6</p>
+          </div>
+          <div class="step" data-step="7">
+            <p>STEP 7</p>
           </div>
         </article>
 
@@ -73,6 +85,8 @@
       const draw = {}
       draw.canvas1 = function() {
 
+        const plot = canvas1
+
         const dims = {
           width: width,
           height: height,
@@ -83,7 +97,7 @@
           height: dims.height - dims.margin.t - dims.margin.b
         }
 
-        // compute scales
+        // compute scales and position constants
         function expand(domain) {
           const range = domain[1] - domain[0]
           const expansion = range * 0.05
@@ -97,59 +111,308 @@
           .nice()
         const xDomain = xScale.domain()
 
+        const residAbsMax = d3.max(data, d => Math.abs(d.residual))
+        const xScale1D = d3.scaleLinear()
+          .domain([-residAbsMax, residAbsMax])
+          .range([0, dims.panel.width])
+          .nice()
+
         const yScale = d3
           .scaleLinear()
           .domain(expand(d3.extent(data, d => d.observed)))
           .range([dims.panel.height, 0])
           .nice()
+        const averageY = yScale(d3.mean(data, d => d.observed))
 
-        // init static elements
 
-        const panel = canvas1.append("g")
+        // draw layers
+
+        const panel = plot.append("g")
           .classed("panel", true)
           .style("transform", `translate(${dims.margin.l}px, ${dims.margin.t}px)`)
 
         const geoms = panel.append("g")
           .classed("geoms", true)
 
+        // regression line
         const lmLine = geoms.append("line")
           .classed("lm-line", true)
           .attr("x1", xScale(xDomain[0]))
           .attr("y1", yScale(model.predict(xDomain[0])))
           .attr("x2", xScale(xDomain[1]))
           .attr("y2", yScale(model.predict(xDomain[1])))
-          .attr("stroke", "blue")
+          .attr("stroke", "steelblue")
 
-        // draw x-axis
-        const xAxis = panel.call((g) => {
-          g.append("g")
-            .classed("axis x-axis", true)
+        // data points
+        const pointsG = geoms.append("g")
+          .classed("points", true)
+          .selectAll(".point-g")
+          .data(data)
+          .join("g")
+          .classed("point-g", true)
+          .style(
+            "transform",
+            (d) => `translate(
+            ${xScale(d.predictor)}px,
+            ${yScale(d.observed)}px)`
+          )
+
+        // residual as difference
+        const residualLine = pointsG
+          .selectAll("line")
+          .data(d => [d])
+          .join("line")
+            .classed("residual-line", true)
+            .attr("x1", 0)
+            .attr("y1", 0)
+            .attr("x2", 0)
+            .attr("y2", d => yScale(d.fitted) - yScale(d.observed))
+            .attr("stroke", d => d.residual > 0 ? "green" : "red")
+
+        // observed points
+        const points = pointsG
+          .append("circle")
+          .classed("observed-point", true)
+          .attr("r", 6)
+          .attr("fill", "black")
+          .attr("stroke", "white")
+        
+        // residual annotations
+        const residualText = pointsG
+          .append("text")
+          .classed("residual-text", true)
+          .attr("dx", (d) => (d.residual > 0 ? "2em" : "-2em"))
+          .attr("dy", "0.35em")
+          .text((d) => {
+            const residual = d3.format(".2f")(d.residual);
+            return (residual > 0 ? "+" : "") + residual;
+          })
+          .style("fill", (d) => d.residual > 0 ? "green" : "red")
+          
+        // residual points
+        const residualPoint = geoms.selectAll(".residual-point")
+          .data(data)
+          .join("circle")
+            .classed("residual-point", true)
+            .attr("cx", d => xScale1D(d.residual))
+            .attr("cy", averageY - 20)
+            .attr("r", 5)
+            .attr("fill", "black")
+            .attr("stroke", "white")
+
+        // draw axes
+        const xAxis = panel.append("g")
+            .classed("axis", true)
             .style("transform", `translate(0px, ${dims.panel.height}px)`)
             .call(d3.axisBottom(xScale).ticks(dims.panel.width / 100))
-            .append("text")
-              .style("font-size", "22px")
-              .attr("text-anchor", "end")
-              .attr("x", dims.panel.width)
-              .attr("dy", "-1.5em")
-              .text("Body Mass (g) →")
-          g.selectAll(".tick text")
-            .attr("dy", "1em")
-        });
+            .call(g => {
+              g.append("text")
+                .style("font-size", "22px")
+                .attr("text-anchor", "end")
+                .attr("x", dims.panel.width)
+                .attr("dy", "-1.5em")
+                .text("Body Mass (g) →")
+              g.selectAll(".tick text")
+                .attr("dy", "1em")
+            })
 
-        // draw y-axis
-        const yAxis = panel.call((g) => {
-          g.append("g")
-            .classed("axis y-axis", true)
+        const xAxis1D = panel.append("g")
+            .classed("axis", true)
+            .style("transform", `translate(0px, ${averageY}px)`)
+            .call(d3.axisBottom(xScale1D).ticks(dims.panel.width / 100))
+            .call(g => {
+              g.append("text")
+                .style("font-size", "22px")
+                .attr("text-anchor", "middle")
+                .attr("x", dims.panel.width / 2)
+                .attr("dy", "3em")
+                .text("Residuals")
+            })
+
+        const yAxis = panel.append("g")
+            .classed("axis", true)
             .call(d3.axisLeft(yScale).ticks(dims.panel.height / 80))
-            .append("text")
-              .style("font-size", "22px")
-              .style("transform", "rotate(90deg)")
-              .style("text-anchor", "start")
-              .attr("dy", "-1.5em")
-              .text("← Beak Length (mm)")
-          g.selectAll(".tick text")
-            .attr("dx", "-0.2em")
-        });
+            .call(g => {
+              g.append("text")
+                .style("font-size", "22px")
+                .style("transform", "rotate(90deg)")
+                .style("text-anchor", "start")
+                .attr("dy", "-1.5em")
+                .text("← Bill Length (mm)")
+              g.selectAll(".tick text")
+                .attr("dx", "-0.2em")
+            })
+
+        // init trnasparent state
+        lmLine.style("opacity", 0)
+        residualLine.style("stroke-dasharray", "0,1")
+        residualText.style("opacity", 0)
+        xAxis1D.style("opacity", 0)
+        residualPoint.style("opacity", 0)
+
+        // functions triggered on step enter/exit
+        return {
+          step0(direction) {
+            if (direction == "down") {
+
+            } else {
+              canvas1.style("opacity", 0)
+              stepID.style("opacity", 0)
+            }
+          },
+          step1(direction) {
+            if (direction == "down") {
+              canvas1.style("opacity", 1)
+              stepID.style("opacity", 1)
+            } else {
+              lmLine.interrupt()
+                .transition()
+                .duration(1000)
+                .style("opacity", 0)
+            }
+          },
+          step2(direction) {
+            if (direction === "down") {
+              lmLine.interrupt()
+                .transition()
+                .duration(1000)
+                .style("opacity", 1)
+            } else {
+              residualLine.interrupt()
+                .transition()
+                .duration(1000)
+                .styleTween("stroke-dasharray", function () {
+                  const length = this.getTotalLength();
+                  return d3.interpolate(`${length},${length}`, `0,${length}`);
+                })
+            }
+          },
+          step3(direction) {
+            if (direction === "down") {
+              residualLine.interrupt()
+                .transition()
+                .duration(1000)
+                .styleTween("stroke-dasharray", function () {
+                  const length = this.getTotalLength();
+                  return d3.interpolate(`0,${length}`, `${length},${length}`);
+                })
+            } else {
+              residualText.interrupt()
+                .transition()
+                .duration(1000)
+                .style("opacity", 0)
+            }
+          },
+          step4(direction) {
+            if (direction === "down") {
+              residualText.interrupt()
+                .transition()
+                .delay((d, i) => 50 * i)
+                .style("opacity", 1)
+            } else {
+
+              const t = plot.transition().duration(1000).ease(d3.easeQuadOut)
+
+              xAxis
+                .transition(t)
+                .style("opacity", 1)
+              yAxis
+                .transition(t)
+                .style("opacity", 1)
+
+              lmLine.transition(t)
+                .attr("y1", yScale(model.predict(xDomain[0])))
+                .attr("y2", yScale(model.predict(xDomain[1])))
+                .style("opacity", 1)
+
+              pointsG
+                .transition(t)
+                .style(
+                  "transform",
+                  (d) => `translate(
+                  ${xScale(d.predictor)}px,
+                  ${yScale(d.observed)}px)`
+                )
+                
+              points.interrupt().style("opacity", 1)
+              residualText.interrupt().style("opacity", 1)
+              residualLine.interrupt().style("stroke-dasharray", "none")
+
+              xAxis1D.interrupt().style("opacity", 0)
+              residualPoint.interrupt().style("opacity", 0)
+
+            }
+          },
+          step5(direction) {
+            if (direction === "down") {
+
+              const t1 = plot.transition().duration(1000)
+              const t2 = t1.transition().duration(1000)
+              const t3 = t2.transition().duration(1000)
+
+              // 1st transition
+
+              xAxis
+                .transition(t1)
+                .style("opacity", 0)
+              yAxis
+                .transition(t1)
+                .style("opacity", 0)
+
+              lmLine
+                .transition(t1)
+                .attr("y1", averageY)
+                .attr("y2", averageY)
+                .style("opacity", 0)
+
+              pointsG
+                .transition(t1)
+                .style(
+                  "transform",
+                  (d) => `translate(
+                  ${xScale(d.predictor)}px,
+                  ${yScale(d.observed) - (yScale(d.fitted) - averageY)}px)`
+                )
+
+              points
+                .transition(t1)
+                .style("opacity", 0)
+              residualText
+                .transition(t1)
+                .style("opacity", 0)
+              
+              // 2nd transition
+
+              xAxis1D
+                .transition(t2)
+                .style("opacity", 1)
+
+              pointsG
+                .transition(t2)
+                .ease(d3.easeCubicInOut)
+                .style(
+                  "transform",
+                  (d) => `translate(
+                  ${xScale1D(d.residual)}px,
+                  ${yScale(d.observed) - (yScale(d.fitted) - averageY)}px)`
+                )
+
+              // 3rd transition
+
+              residualLine
+                .transition(t3)
+                .styleTween("stroke-dasharray", function () {
+                  const length = this.getTotalLength();
+                  return d3.interpolate(`0, 0, ${length}, ${length}`, `0, ${length}, ${length}, ${length}`);
+                })              
+
+              residualPoint
+                .transition(t3)
+                .style("opacity", 1)
+
+            }
+          }
+        }
 
       }()
 
@@ -160,11 +423,15 @@
       // generic window resize listener event
       function handleResize() {
         // 1. update height of step elements
-        const stepH = Math.floor(window.innerHeight * 0.8);
-        const stepMargin = stepH * 1.2
+        const stepH = Math.floor(window.innerHeight * 1);
+        const stepPadding = stepH * 0.8
+        const stepMargin = stepH * 0.8
+
         step
           .style("height", stepH + 'px')
+          .style("padding-bottom", stepPadding + 'px')
           .style("margin-bottom", stepMargin + 'px')
+         
 
         const figureHeight = window.innerHeight * 0.9;
         const figureMarginTop = (window.innerHeight - figureHeight) / 2;
@@ -189,20 +456,12 @@
         
 
         // main behavior
-        switch(response.index) {
-          case 0:
-            if (response.direction === "down") {
-              canvas1.style("opacity", 1)
-              stepID.style("opacity", 1)
-            } else {
-            }
+        draw["canvas" + 1]["step" + response.index](response.direction)
 
-          default:
-        }
 
 
         // update graphic based on step
-        figure.select("p").text(response.index + 1);
+        figure.select("p").text(response.index);
       }
 
       function setupStickyfill() {
@@ -223,7 +482,7 @@
         scroller
           .setup({
             step: "#scrolly article .step",
-            offset: 0.9,
+            offset: 0.6,
             debug: true
           })
           .onStepEnter(handleStepEnter);
@@ -235,6 +494,7 @@
       // kick things off
       init();
     </script>
+
     <style> 
       text {
         fill: black;
@@ -242,16 +502,18 @@
       .axis {
         font-size: 18px;
       }
-      .dot-g text {
-        text-anchor: middle;
-        font-size: 16px;
-      }
       .lm-line {
-        stroke: steelblue;
         stroke-width: 4px;
       }
-      .residual-lines {
+      .residual-line {
         stroke-width: 3px;
+      }
+      .residual-text {
+        font-size: 20px;
+        stroke: white;
+        stroke-width: 5px;
+        text-anchor: middle;
+        paint-order: stroke;
       }
     </style>
   </body>

@@ -84,7 +84,8 @@ nav {
 
 .intro__hed {
   font-size: 2em;
-  margin: 2rem auto 2rem auto;
+  margin: 5rem auto 2rem auto;
+  letter-spacing: 3px;
 }
 
 .intro__sub {
