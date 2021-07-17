@@ -1,9 +1,16 @@
+@font-face {
+  font-family: "Chillax";
+  src: url('./Chillax-Regular.otf') format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
 * {
   box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
+  background-color: #fdf8ed;
   margin: 0;
   padding: 0;
 }
@@ -67,7 +74,8 @@ nav {
   margin-right: 0.5rem;
 }
 
-#intro {
+section {
+  font-family: Chillax;
   max-width: 60rem;
   margin: 1rem auto;
   text-align: center;
@@ -98,7 +106,7 @@ nav {
 
 @keyframes flashingText {
   0% {
-    color: rgb(235, 235, 235);
+    color: transparent;
   }
   100% {
     color: grey;
