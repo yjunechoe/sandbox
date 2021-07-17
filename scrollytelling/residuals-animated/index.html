@@ -36,7 +36,7 @@
         </article>
 
         <figure>
-          <svg class="canvas" id="canvas1" preserveAspectRatio="none" viewBox="0,0, 1000, 1000"></svg>
+          <svg class="canvas" id="canvas1" viewBox="0,0, 1000, 1000"></svg>
           <p id="step-id">0</p>
         </figure>
       </section>
@@ -49,6 +49,7 @@
     <script src="./intersection-observer.js"></script>
     <script src="./stickyfill.min.js"></script>
     <script src="./scrollama.min.js"></script>
+    <script src="./data.js"></script>
     <script>
       // using d3 for convenience
       const main = d3.select("main");
@@ -79,18 +80,81 @@
         }
 
         // debugging --
-        canvas1.append("rect").attr("width", dims.width).attr("height", dims.height).attr("fill", "lightgrey")
-        // -- debuggubg
+        canvas1.append("rect").attr("width", dims.width).attr("height", dims.height).attr("stroke", "lightgrey").attr("fill", "none")
+        // -- debugging
+
+        // compute scales
+        function expand(domain) {
+          const range = domain[1] - domain[0]
+          const expansion = range * 0.05
+          return [domain[0] - expansion, domain[1] + expansion]
+        }
+
+        const xScale = d3
+          .scaleLinear()
+          .domain(expand(d3.extent(data, d => d.predictor)))
+          .range([0, dims.panel.width])
+          .nice()
+        const xDomain = xScale.domain()
+
+        const yScale = d3
+          .scaleLinear()
+          .domain(expand(d3.extent(data, d => d.observed)))
+          .range([dims.panel.height, 0])
+          .nice()
+
+        // init static elements
 
         const panel = canvas1.append("g")
           .classed("panel", true)
           .style("transform", `translate(${dims.margin.l}px, ${dims.margin.t}px)`)
         
         // debugging --
-        panel.append("rect").attr("width", dims.panel.width).attr("height", dims.panel.height).attr("fill", "grey")
-        // -- debuggubg
+        panel.append("rect").attr("width", dims.panel.width).attr("height", dims.panel.height).attr("stroke", "grey").attr("fill", "none")
+        // -- debugging
+
+        const geoms = panel.append("g")
+          .classed("geoms", true)
+
+        const lmLine = geoms.append("line")
+          .classed("lm-line", true)
+          .attr("x1", xScale(xDomain[0]))
+          .attr("y1", yScale(model.predict(xDomain[0])))
+          .attr("x2", xScale(xDomain[1]))
+          .attr("y2", yScale(model.predict(xDomain[1])))
+          .attr("stroke", "blue")
+
+        // draw x-axis
+        const xAxis = panel.call((g) => {
+          g.append("g")
+            .classed("axis x-axis", true)
+            .style("transform", `translate(0px, ${dims.panel.height}px)`)
+            .call(d3.axisBottom(xScale).ticks(dims.panel.width / 100))
+            .append("text")
+              .attr("text-anchor", "end")
+              .attr("x", dims.panel.width)
+              .attr("dy", "-1em")
+              .text("Body Mass (g) →")
+          g.selectAll(".tick text")
+            .attr("dy", "1em")
+        });
+
+        // draw y-axis
+        const yAxis = panel.call((g) => {
+          g.append("g")
+            .classed("axis y-axis", true)
+            .call(d3.axisLeft(yScale).ticks(dims.panel.height / 80))
+            .append("text")
+              .style("transform", "rotate(90deg)")
+              .style("text-anchor", "start")
+              .attr("dy", "-1em")
+              .text("← Beak Length (mm)")
+          g.selectAll(".tick text")
+            .attr("dx", "-0.2em")
+        });
 
       }()
+
 
       // initialize the scrollama
       const scroller = scrollama();
@@ -129,7 +193,7 @@
         // main behavior
         switch(response.index) {
           case 0:
-            if (response.direction == "down") {
+            if (response.direction === "down") {
               canvas1.style("opacity", 1)
               stepID.style("opacity", 1)
             } else {
@@ -173,5 +237,30 @@
       // kick things off
       init();
     </script>
+    <style> 
+      text {
+        fill: black;
+        stroke: white;
+        stroke-width: 5px;
+        paint-order: stroke;
+      }
+      .axis {
+        font-size: 18px;
+      }
+      .dot-g text {
+        text-anchor: middle;
+        font-size: 16px;
+      }
+      .lm-line {
+        stroke: steelblue;
+        stroke-width: 4px;
+      }
+      .residual-lines {
+        stroke-width: 3px;
+      }
+      .x-axis .tick text {
+
+      }
+    </style>
   </body>
 </html>

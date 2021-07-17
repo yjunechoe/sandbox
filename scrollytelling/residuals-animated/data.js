@@ -25,4 +25,4 @@ const model = {
   params: {intercept: 20.02, slope: 0.00526},
   R2: 0.775
 }
-model.line = function(x) {model.intercept + model.slope * x}
+model.predict = function(x) {return model.params.intercept + model.params.slope * x}
