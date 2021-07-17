@@ -13,9 +13,13 @@
   <body>
     <main>
       <section id="intro">
-        <h1 class="intro__hed">Sticky Side Example</h1>
-        <p class="intro__dek">
-          Start scrolling to see how it works.
+        <h1 class="intro__hed">The life of residuals</h1>
+        <p class="intro__sub">A visual guide of model diagnostics</p>
+        <p class="intro__body">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </p>
+        <p class="intro__exit">
+          Start scrolling to begin.
         </p>
       </section>
 
@@ -72,16 +76,12 @@
         const dims = {
           width: width,
           height: height,
-          margin: {t: height / 40, r: width / 40, b: height / 20, l: width / 20}
+          margin: {t: height / 40, r: 0, b: height / 20, l: 0}
         }
         dims.panel = {
           width: dims.width - dims.margin.r - dims.margin.l,
           height: dims.height - dims.margin.t - dims.margin.b
         }
-
-        // debugging --
-        canvas1.append("rect").attr("width", dims.width).attr("height", dims.height).attr("stroke", "lightgrey").attr("fill", "none")
-        // -- debugging
 
         // compute scales
         function expand(domain) {
@@ -108,10 +108,6 @@
         const panel = canvas1.append("g")
           .classed("panel", true)
           .style("transform", `translate(${dims.margin.l}px, ${dims.margin.t}px)`)
-        
-        // debugging --
-        panel.append("rect").attr("width", dims.panel.width).attr("height", dims.panel.height).attr("stroke", "grey").attr("fill", "none")
-        // -- debugging
 
         const geoms = panel.append("g")
           .classed("geoms", true)
@@ -131,9 +127,10 @@
             .style("transform", `translate(0px, ${dims.panel.height}px)`)
             .call(d3.axisBottom(xScale).ticks(dims.panel.width / 100))
             .append("text")
+              .style("font-size", "22px")
               .attr("text-anchor", "end")
               .attr("x", dims.panel.width)
-              .attr("dy", "-1em")
+              .attr("dy", "-1.5em")
               .text("Body Mass (g) →")
           g.selectAll(".tick text")
             .attr("dy", "1em")
@@ -145,9 +142,10 @@
             .classed("axis y-axis", true)
             .call(d3.axisLeft(yScale).ticks(dims.panel.height / 80))
             .append("text")
+              .style("font-size", "22px")
               .style("transform", "rotate(90deg)")
               .style("text-anchor", "start")
-              .attr("dy", "-1em")
+              .attr("dy", "-1.5em")
               .text("← Beak Length (mm)")
           g.selectAll(".tick text")
             .attr("dx", "-0.2em")
@@ -225,7 +223,7 @@
         scroller
           .setup({
             step: "#scrolly article .step",
-            offset: 0.3,
+            offset: 0.9,
             debug: true
           })
           .onStepEnter(handleStepEnter);
@@ -257,9 +255,6 @@
       }
       .residual-lines {
         stroke-width: 3px;
-      }
-      .x-axis .tick text {
-
       }
     </style>
   </body>

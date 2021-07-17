@@ -15,8 +15,8 @@
 
   article {
     position: relative;
-    padding: 0 2rem 0 2rem;
-    max-width: 50rem;
+    padding: 0 1rem 0 2rem;
+    max-width: 40rem;
   }
 
   figure {
@@ -35,14 +35,14 @@
     text-align: center;
     padding: 1rem;
     position: absolute;
-    top: 10%;
+    top: 3%;
     left: 95%;
     -moz-transform: translate(-50%, -50%);
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
     font-size: 6rem;
     font-weight: 900;
-    color: steelblue;
+    color: lightgrey;
     opacity: 0;
     -webkit-transition: opacity 0.3s ease-out;
     -moz-transition: opacity 0.3s ease-out;
@@ -55,10 +55,10 @@
     height: 100%;
     width: 100%;
     opacity: 0;
-    -webkit-transition: opacity 0.3s ease-out;
-    -moz-transition: opacity 0.3s ease-out;
-    -o-transition: opacity 0.3s ease-out;
-    transition: opacity 0.3s ease-out;
+    -webkit-transition: opacity 1s ease-out;
+    -moz-transition: opacity 1s ease-out;
+    -o-transition: opacity 1s ease-out;
+    transition: opacity 1s ease-out;
   }
 
   .step {
