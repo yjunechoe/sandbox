@@ -126,17 +126,23 @@
           .domain([-residAbsMax, residAbsMax])
           .range([0, dims.panel.width])
           .nice()
+
+        const resid_zAbsMax = d3.max(data, d => Math.abs(d.residual_z))
+        const x_zScale1D = d3.scaleLinear()
+          .domain([-resid_zAbsMax, resid_zAbsMax])
+          .range([0, dims.panel.width])
+          .nice()
         
         const histGen = d3.histogram()
           .value(d => d.residual)
-          .domain(xScale1D.domain())
+          .domain(x_zScale1D.domain())
           .thresholds(dims.panel.width / 100)
         const histData = histGen(data)
         const yScaleHist = d3.scaleLinear()
           .domain([0, d3.max(histData, d => d.length)])
           .range([dims.panel.height, 0])
           .nice()
-        const histBand = xScale1D(histData[0].x1) - xScale1D(histData[0].x0)
+        const histBand = x_zScale1D(histData[0].x1) - x_zScale1D(histData[0].x0)
         const histPadding = histBand * 0.05
 
         // draw layers
@@ -225,9 +231,9 @@
           .data(histData)
           .join("rect")
             .classed("residual-bar", true)
-            .attr("x", d => xScale1D(d.x0) + histPadding)
+            .attr("x", d => x_zScale1D(d.x0) + histPadding)
             .attr("y", d => yScaleHist(0))
-            .attr("width", d => xScale1D(d.x1) - xScale1D(d.x0) - histPadding * 2)
+            .attr("width", d => x_zScale1D(d.x1) - x_zScale1D(d.x0) - histPadding * 2)
             .attr("fill", "steelblue")
 
         // draw axes
@@ -264,14 +270,12 @@
           .classed("axis", true)
           .style("transform", `translate(0px, ${averageY}px)`)
           .call(d3.axisBottom(xScale1D).ticks(dims.panel.width / 100))
-          .call(g => {
-            g.append("text")
-             .style("font-size", "22px")
-             .attr("text-anchor", "middle")
-             .attr("x", dims.panel.width / 2)
-             .attr("dy", "3em")
-             .text("Residuals")
-          })
+        const xAxis1DTitle = xAxis1D.append("g")
+          .style("font-size", "22px")
+          .attr("text-anchor", "middle")
+          .attr("x", dims.panel.width / 2)
+          .attr("dy", "3em")
+          .text("Residuals")
 
         const yAxisHist = panel.append("g")
           .classed("axis", true)
@@ -457,6 +461,23 @@
 
             } else {
               
+              xAxis1D
+                .transition()
+                .duration(1000)
+                .call(d3.axisBottom(xScale1D).ticks(dims.panel.width / 100))
+
+            }
+          },
+          step6(direction) {
+            if (direction == "down") {
+
+              xAxis1D
+                .transition()
+                .duration(1000)
+                .call(d3.axisBottom(x_zScale1D))
+
+            } else {
+
               const t1 = plot.transition().duration(1000)
               const t2 = t1.transition().duration(1000)
 
@@ -480,7 +501,7 @@
 
             }
           },
-          step6(direction) {
+          step7(direction) {
             if (direction == "down") {
               
               const t1 = plot.transition().duration(1000)
@@ -502,6 +523,7 @@
 
               residualBar
                 .transition(t2)
+                .ease(d3.easeQuadOut)
                 .attr("y", d => yScaleHist(d.length))
                 .attr("height", d => dims.panel.height - yScaleHist(d.length))
 
