@@ -330,7 +330,7 @@
             } else {
               residualLine
                 .transition()
-                .duration(1000)
+                .duration(700)
                 .styleTween("stroke-dasharray", function () {
                   const length = this.getTotalLength();
                   return d3.interpolate(`${length},${length}`, `0,${length}`);
@@ -361,7 +361,7 @@
 
               residualText
                 .transition()
-                .duration(1000)
+                .duration(600)
                 .style("opacity", 0)
             }
           },
@@ -373,7 +373,7 @@
                 .style("opacity", 1)
             } else {
 
-              const t = plot.transition().duration(1000).ease(d3.easeQuadOut)
+              const t = plot.transition().duration(700).ease(d3.easeQuadOut)
 
               xAxis
                 .transition(t)
@@ -480,7 +480,7 @@
               xAxis1D.interrupt()
                 .style("transform", `translate(0px, ${averageY}px`)
               
-              const t = plot.transition().duration(1000)
+              const t = plot.transition().duration(500)
 
               xAxis1D
                 .transition(t)
