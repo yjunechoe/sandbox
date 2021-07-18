@@ -370,12 +370,13 @@
                 .transition(t)
                 .style("opacity", 1)
 
-              lmLine.transition(t)
+              lmLine.interrupt()
+                .transition(t)
                 .attr("y1", yScale(model.predict(xDomain[0])))
                 .attr("y2", yScale(model.predict(xDomain[1])))
                 .style("opacity", 1)
 
-              pointsG
+              pointsG.interrupt()
                 .transition(t)
                 .style(
                   "transform",
@@ -384,12 +385,12 @@
                   ${yScale(d.observed)}px)`
                 )
                 
-              points.style("opacity", 1)
-              residualText.style("opacity", 1)
-              residualLine.style("stroke-dasharray", "none")
+              points.interrupt().style("opacity", 1)
+              residualText.interrupt().style("opacity", 1)
+              residualLine.interrupt().style("stroke-dasharray", "none")
 
-              xAxis1D.style("opacity", 0)
-              residualPoint.style("opacity", 0)
+              xAxis1D.interrupt().style("opacity", 0)
+              residualPoint.interrupt().style("opacity", 0)
 
             }
           },
