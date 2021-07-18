@@ -454,7 +454,7 @@
                 .transition(t3)
                 .styleTween("stroke-dasharray", function () {
                   const length = this.getTotalLength();
-                  return d3.interpolate(`0, 0, ${length}, ${length}`, `0, ${length}, ${length}, ${length}`);
+                  return d3.interpolate(`0, 0, ${length}, 0`, `0, ${length}, ${length}, 0`);
                 })              
 
               residualPoint
@@ -480,6 +480,20 @@
           },
           step6(direction) {
             if (direction == "down") {
+
+              xAxis1D.interrupt()
+                .style("opacity", 1)
+              residualPoint.interrupt()
+                .style("opacity", 0.5)
+              pointsG.interrupt()
+                .style(
+                  "transform",
+                  (d) => `translate(
+                  ${xScale1D(d.residual)}px,
+                  ${yScale(d.observed) - (yScale(d.fitted) - averageY)}px)`
+                )
+              residualLine.interrupt()
+                .style("stroke-dasharray", "0, 1")
 
               const t = plot.transition().duration(1000)
 
