@@ -52,6 +52,7 @@
         </article>
 
         <figure>
+          <img class="figure__intro" src="https://allisonhorst.github.io/palmerpenguins/reference/figures/culmen_depth.png">
           <svg class="canvas" id="canvas1" viewBox="0,0, 1000, 1000"></svg>
           <p id="step-id">0</p>
         </figure>
@@ -71,6 +72,7 @@
       const main = d3.select("main");
       const scrolly = main.select("#scrolly");
       const figure = scrolly.select("figure");
+      const figureIntro = figure.select(".figure__intro")
       const article = scrolly.select("article");
       const step = article.selectAll(".step");
       const stepID = figure.select("#step-id")
@@ -97,7 +99,7 @@
           height: dims.height - dims.margin.t - dims.margin.b
         }
 
-        // compute scales and position constants
+        // compute scales, helpers, position constants
         function expand(domain) {
           const range = domain[1] - domain[0]
           const expansion = range * 0.05
@@ -110,13 +112,7 @@
           .range([0, dims.panel.width])
           .nice()
         const xDomain = xScale.domain()
-
-        const residAbsMax = d3.max(data, d => Math.abs(d.residual))
-        const xScale1D = d3.scaleLinear()
-          .domain([-residAbsMax, residAbsMax])
-          .range([0, dims.panel.width])
-          .nice()
-
+        
         const yScale = d3
           .scaleLinear()
           .domain(expand(d3.extent(data, d => d.observed)))
@@ -124,6 +120,24 @@
           .nice()
         const averageY = yScale(d3.mean(data, d => d.observed))
 
+        //// for 1D stage
+        const residAbsMax = d3.max(data, d => Math.abs(d.residual))
+        const xScale1D = d3.scaleLinear()
+          .domain([-residAbsMax, residAbsMax])
+          .range([0, dims.panel.width])
+          .nice()
+        
+        const histGen = d3.histogram()
+          .value(d => d.residual)
+          .domain(xScale1D.domain())
+          .thresholds(dims.panel.width / 100)
+        const histData = histGen(data)
+        const yScaleHist = d3.scaleLinear()
+          .domain([0, d3.max(histData, d => d.length)])
+          .range([dims.panel.height, 0])
+          .nice()
+        const histBand = xScale1D(histData[0].x1) - xScale1D(histData[0].x0)
+        const histPadding = histBand * 0.05
 
         // draw layers
 
@@ -190,7 +204,10 @@
           .style("fill", (d) => d.residual > 0 ? "green" : "red")
           
         // residual points
-        const residualPoint = geoms.selectAll(".residual-point")
+        const residualPoint = geoms
+          .append("g")
+            .classed("residual-points", true)
+          .selectAll(".residual-point")
           .data(data)
           .join("circle")
             .classed("residual-point", true)
@@ -199,6 +216,19 @@
             .attr("r", 5)
             .attr("fill", "black")
             .attr("stroke", "white")
+
+        // residual histogram
+        const residualBar = geoms
+          .append("g")
+            .classed("residual-bars", true)
+          .selectAll(".residual-bar")
+          .data(histData)
+          .join("rect")
+            .classed("residual-bar", true)
+            .attr("x", d => xScale1D(d.x0) + histPadding)
+            .attr("y", d => yScaleHist(0))
+            .attr("width", d => xScale1D(d.x1) - xScale1D(d.x0) - histPadding * 2)
+            .attr("fill", "steelblue")
 
         // draw axes
         const xAxis = panel.append("g")
@@ -249,6 +279,7 @@
         residualText.style("opacity", 0)
         xAxis1D.style("opacity", 0)
         residualPoint.style("opacity", 0)
+        residualBar.attr("height", 0)
 
         // functions triggered on step enter/exit
         return {
@@ -256,18 +287,27 @@
             if (direction == "down") {
 
             } else {
+              figureIntro
+                .transition()
+                .duration(1000)
+                .style("opacity", 1)
               canvas1.style("opacity", 0)
               stepID.style("opacity", 0)
             }
           },
           step1(direction) {
             if (direction == "down") {
+              figureIntro
+                .transition()
+                .duration(1000)
+                .style("opacity", 0)
+
               canvas1.style("opacity", 1)
               stepID.style("opacity", 1)
             } else {
               lmLine.interrupt()
                 .transition()
-                .duration(1000)
+                .duration(500)
                 .style("opacity", 0)
             }
           },
@@ -409,6 +449,31 @@
               residualPoint
                 .transition(t3)
                 .style("opacity", 1)
+
+            } else {
+
+            }
+          },
+          step6(direction) {
+            if (direction == "down") {
+              
+              const t1 = plot.transition().duration(1000)
+              const t2 = t1.transition().duration(1000)
+
+              xAxis1D
+                .transition(t1)
+                .style("transform", `translate(0px, ${dims.panel.height}px)`)
+
+              residualPoint
+                .transition(t1)
+                .attr("cy", yScaleHist(0))
+                .style("opacity", 0)
+
+              residualBar
+                .transition(t2)
+                .attr("y", d => yScaleHist(d.length))
+                .attr("height", d => dims.panel.height - yScaleHist(d.length))
+            } else {
 
             }
           }

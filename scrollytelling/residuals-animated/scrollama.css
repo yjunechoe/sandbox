@@ -50,6 +50,13 @@
     transition: opacity 0.3s ease-out;
   }
 
+  .figure__intro {
+    position: absolute;
+    width: 80%;
+    top: 10%;
+    left: 10%;
+  }
+
   figure .canvas {
     position: absolute;
     height: 100%;
