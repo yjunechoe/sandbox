@@ -351,6 +351,10 @@
                 .transition()
                 .duration(1000)
                 .style("opacity", 0)
+              lmLine.interrupt()
+                .attr("y1", yScale(model.predict(xDomain[0])))
+                .attr("y2", yScale(model.predict(xDomain[1])))
+                .style("opacity", 1)
             }
           },
           step4(direction) {
@@ -370,7 +374,7 @@
                 .transition(t)
                 .style("opacity", 1)
 
-              lmLine.interrupt()
+              lmLine
                 .transition(t)
                 .attr("y1", yScale(model.predict(xDomain[0])))
                 .attr("y2", yScale(model.predict(xDomain[1])))
@@ -388,7 +392,6 @@
               points.interrupt().style("opacity", 1)
               residualText.interrupt().style("opacity", 1)
               residualLine.interrupt().style("stroke-dasharray", "none")
-
               xAxis1D.interrupt().style("opacity", 0)
               residualPoint.interrupt().style("opacity", 0)
 
@@ -462,6 +465,8 @@
                 .style("opacity", 0.5)
 
             } else {
+
+
               
               const t = plot.transition().duration(1000)
 
