@@ -92,7 +92,7 @@
         const dims = {
           width: width,
           height: height,
-          margin: {t: height / 40, r: 0, b: height / 20, l: 0}
+          margin: {t: height / 40, r: 0, b: height / 15, l: 0}
         }
         dims.panel = {
           width: dims.width - dims.margin.r - dims.margin.l,
@@ -246,19 +246,6 @@
                 .attr("dy", "1em")
             })
 
-        const xAxis1D = panel.append("g")
-            .classed("axis", true)
-            .style("transform", `translate(0px, ${averageY}px)`)
-            .call(d3.axisBottom(xScale1D).ticks(dims.panel.width / 100))
-            .call(g => {
-              g.append("text")
-                .style("font-size", "22px")
-                .attr("text-anchor", "middle")
-                .attr("x", dims.panel.width / 2)
-                .attr("dy", "3em")
-                .text("Residuals")
-            })
-
         const yAxis = panel.append("g")
             .classed("axis", true)
             .call(d3.axisLeft(yScale).ticks(dims.panel.height / 80))
@@ -273,11 +260,29 @@
                 .attr("dx", "-0.2em")
             })
 
+        const xAxis1D = panel.append("g")
+          .classed("axis", true)
+          .style("transform", `translate(0px, ${averageY}px)`)
+          .call(d3.axisBottom(xScale1D).ticks(dims.panel.width / 100))
+          .call(g => {
+            g.append("text")
+             .style("font-size", "22px")
+             .attr("text-anchor", "middle")
+             .attr("x", dims.panel.width / 2)
+             .attr("dy", "3em")
+             .text("Residuals")
+          })
+
+        const yAxisHist = panel.append("g")
+          .classed("axis", true)
+          .call(d3.axisLeft(yScaleHist).ticks(dims.panel.width / 120))
+
         // init trnasparent state
         lmLine.style("opacity", 0)
         residualLine.style("stroke-dasharray", "0,1")
         residualText.style("opacity", 0)
         xAxis1D.style("opacity", 0)
+        yAxisHist.style("opacity", 0)
         residualPoint.style("opacity", 0)
         residualBar.attr("height", 0)
 
@@ -451,7 +456,7 @@
                 .style("opacity", 1)
 
             } else {
-              // TODO
+              
               const t1 = plot.transition().duration(1000)
               const t2 = t1.transition().duration(1000)
 
@@ -469,6 +474,10 @@
                 .transition(t2)
                 .style("transform", `translate(0px, ${averageY}px`)
 
+              yAxisHist
+                .transition(t1)
+                .style("opacity", 0)
+
             }
           },
           step6(direction) {
@@ -479,7 +488,12 @@
 
               xAxis1D
                 .transition(t1)
+                .style("opacity", 1)
                 .style("transform", `translate(0px, ${dims.panel.height}px)`)
+
+              yAxisHist
+                .transition(t1)
+                .style("opacity", 1)
 
               residualPoint
                 .transition(t1)
@@ -581,6 +595,7 @@
     <style> 
       text {
         fill: black;
+        font-family: Open Sans;
       }
       .axis {
         font-size: 18px;
