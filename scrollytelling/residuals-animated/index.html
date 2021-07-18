@@ -347,14 +347,22 @@
                   return d3.interpolate(`0,${length}`, `${length},${length}`);
                 })
             } else {
-              residualText
-                .transition()
-                .duration(1000)
-                .style("opacity", 0)
               lmLine.interrupt()
                 .attr("y1", yScale(model.predict(xDomain[0])))
                 .attr("y2", yScale(model.predict(xDomain[1])))
                 .style("opacity", 1)
+              pointsG.interrupt()
+              .style(
+                "transform",
+                (d) => `translate(
+                ${xScale(d.predictor)}px,
+                ${yScale(d.observed)}px)`
+              )
+
+              residualText
+                .transition()
+                .duration(1000)
+                .style("opacity", 0)
             }
           },
           step4(direction) {
