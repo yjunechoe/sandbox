@@ -451,6 +451,23 @@
                 .style("opacity", 1)
 
             } else {
+              // TODO
+              const t1 = plot.transition().duration(1000)
+              const t2 = t1.transition().duration(1000)
+
+              residualBar
+                .transition(t1)
+                .attr("y", yScaleHist(0))
+                .attr("height", 0)
+              
+              residualPoint
+                .transition(t2)
+                .attr("cy", averageY - 20)
+                .style("opacity", 1)
+
+              xAxis1D
+                .transition(t2)
+                .style("transform", `translate(0px, ${averageY}px`)
 
             }
           },
@@ -473,6 +490,7 @@
                 .transition(t2)
                 .attr("y", d => yScaleHist(d.length))
                 .attr("height", d => dims.panel.height - yScaleHist(d.length))
+
             } else {
 
             }
