@@ -466,7 +466,6 @@
 
               xAxis1D
                 .transition(t)
-                .duration(1000)
                 .call(d3.axisBottom(xScale1D).ticks(dims.panel.width / 100))
 
               xAxis1DTitle
@@ -496,8 +495,8 @@
 
             } else {
 
-              const t1 = plot.transition().duration(1000)
-              const t2 = t1.transition().duration(1000)
+              const t1 = plot.transition().duration(500)
+              const t2 = t1.transition().duration(500)
 
               residualBar
                 .transition(t1)
