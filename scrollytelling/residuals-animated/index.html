@@ -556,21 +556,25 @@
               const t1 = plot.transition().duration(1000)
               const t2 = t1.transition().duration(1000)
 
+              // 1st transition
+
               xAxis1D
                 .transition(t1)
                 .style("opacity", 1)
                 .style("transform", `translate(0px, ${dims.panel.height * 3/4}px)`)
-
-              yAxisHist
-                .transition(t1)
-                .style("opacity", 1)
 
               residualPoint
                 .transition(t1)
                 .attr("cy", yScaleHist(0))
                 .style("opacity", 0)
 
-              // transition y and height simultaneously for grow from baseline
+              // 2nd transition
+
+              yAxisHist
+                .transition(t2)
+                .style("opacity", 1)
+
+              //// transition y and height simultaneously for grow from baseline
               residualBar
                 .transition(t2)
                 .ease(d3.easeQuadOut)
