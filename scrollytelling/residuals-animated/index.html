@@ -140,7 +140,7 @@
         const histData = histGen(data)
         const yScaleHist = d3.scaleLinear()
           .domain([0, d3.max(histData, d => d.length)])
-          .range([dims.panel.height, 0])
+          .range([dims.panel.height * 3/4, dims.panel.height * 1/4])
           .nice()
         const histBand = x_zScale1D(histData[0].x1) - x_zScale1D(histData[0].x0)
         const histPadding = histBand * 0.05
@@ -559,7 +559,7 @@
               xAxis1D
                 .transition(t1)
                 .style("opacity", 1)
-                .style("transform", `translate(0px, ${dims.panel.height}px)`)
+                .style("transform", `translate(0px, ${dims.panel.height * 3/4}px)`)
 
               yAxisHist
                 .transition(t1)
@@ -570,11 +570,12 @@
                 .attr("cy", yScaleHist(0))
                 .style("opacity", 0)
 
+              // transition y and height simultaneously for grow from baseline
               residualBar
                 .transition(t2)
                 .ease(d3.easeQuadOut)
                 .attr("y", d => yScaleHist(d.length))
-                .attr("height", d => dims.panel.height - yScaleHist(d.length))
+                .attr("height", d => yScaleHist(0) - yScaleHist(d.length))
 
             } else {
 
