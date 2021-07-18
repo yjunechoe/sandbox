@@ -219,9 +219,10 @@
             .classed("residual-point", true)
             .attr("cx", d => xScale1D(d.residual))
             .attr("cy", averageY - 20)
-            .attr("r", 5)
+            .attr("r", 10)
             .attr("fill", "black")
             .attr("stroke", "white")
+            .attr("stroke-width", 2)
 
         // residual histogram
         const residualBar = geoms
@@ -234,7 +235,7 @@
             .attr("x", d => x_zScale1D(d.x0) + histPadding)
             .attr("y", d => yScaleHist(0))
             .attr("width", d => x_zScale1D(d.x1) - x_zScale1D(d.x0) - histPadding * 2)
-            .attr("fill", "steelblue")
+            .attr("fill", "#789FBC")
 
         // draw axes
         const xAxis = panel.append("g")
@@ -270,7 +271,7 @@
           .classed("axis", true)
           .style("transform", `translate(0px, ${averageY}px)`)
           .call(d3.axisBottom(xScale1D).ticks(dims.panel.width / 100))
-        const xAxis1DTitle = xAxis1D.append("g")
+        const xAxis1DTitle = xAxis1D.append("text")
           .style("font-size", "22px")
           .attr("text-anchor", "middle")
           .attr("x", dims.panel.width / 2)
@@ -279,7 +280,7 @@
 
         const yAxisHist = panel.append("g")
           .classed("axis", true)
-          .call(d3.axisLeft(yScaleHist).ticks(dims.panel.width / 120))
+          .call(d3.axisLeft(yScaleHist).ticks(dims.panel.width / 200))
 
         // init trnasparent state
         lmLine.style("opacity", 0)
@@ -356,7 +357,7 @@
             if (direction === "down") {
               residualText.interrupt()
                 .transition()
-                .delay((d, i) => 50 * i)
+                .delay((d, i) => 30 * i)
                 .style("opacity", 1)
             } else {
 
@@ -396,8 +397,8 @@
             if (direction === "down") {
 
               const t1 = plot.transition().duration(1000)
-              const t2 = t1.transition().duration(1000)
-              const t3 = t2.transition().duration(1000)
+              const t2 = t1.transition().duration(1200)
+              const t3 = t2.transition().duration(800)
 
               // 1st transition
 
@@ -438,7 +439,7 @@
 
               pointsG
                 .transition(t2)
-                .ease(d3.easeCubicInOut)
+                .ease(d3.easeCubicOut)
                 .style(
                   "transform",
                   (d) => `translate(
@@ -457,24 +458,41 @@
 
               residualPoint
                 .transition(t3)
-                .style("opacity", 1)
+                .style("opacity", 0.5)
 
             } else {
               
+              const t = plot.transition().duration(1000)
+
               xAxis1D
-                .transition()
+                .transition(t)
                 .duration(1000)
                 .call(d3.axisBottom(xScale1D).ticks(dims.panel.width / 100))
+
+              xAxis1DTitle
+                .style("opacity", 0)
+                .transition(t)
+                .ease(d3.easeSinOut)
+                .style("opacity", 1)
+                .text("Residuals")
 
             }
           },
           step6(direction) {
             if (direction == "down") {
 
+              const t = plot.transition().duration(1000)
+
               xAxis1D
-                .transition()
-                .duration(1000)
+                .transition(t)
                 .call(d3.axisBottom(x_zScale1D))
+
+              xAxis1DTitle
+                .style("opacity", 0)
+                .transition(t)
+                .ease(d3.easeSinOut)
+                .style("opacity", 1)
+                .text("Residuals (z-scored)")
 
             } else {
 
@@ -488,8 +506,8 @@
               
               residualPoint
                 .transition(t2)
-                .attr("cy", averageY - 20)
-                .style("opacity", 1)
+                .attr("cy", averageY - 30)
+                .style("opacity", 0.5)
 
               xAxis1D
                 .transition(t2)
