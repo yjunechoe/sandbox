@@ -480,6 +480,7 @@
               xAxis1D.interrupt()
                 .style("transform", `translate(0px, ${averageY}px`)
               residualBar.interrupt()
+                .attr("y", d => yScaleHist(0))
                 .attr("height", 0)
               
               const t = plot.transition().duration(500)
