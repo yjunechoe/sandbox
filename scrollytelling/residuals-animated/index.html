@@ -466,7 +466,11 @@
 
             } else {
 
-
+              residualPoint.interrupt()
+                .attr("cy", averageY - 30)
+                .style("opacity", 0.5)
+              xAxis1D.interrupt()
+                .style("transform", `translate(0px, ${averageY}px`)
               
               const t = plot.transition().duration(1000)
 
