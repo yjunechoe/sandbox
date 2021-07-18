@@ -315,7 +315,7 @@
               canvas1.style("opacity", 1)
               stepID.style("opacity", 1)
             } else {
-              lmLine.interrupt()
+              lmLine
                 .transition()
                 .duration(500)
                 .style("opacity", 0)
@@ -323,12 +323,12 @@
           },
           step2(direction) {
             if (direction === "down") {
-              lmLine.interrupt()
+              lmLine
                 .transition()
                 .duration(1000)
                 .style("opacity", 1)
             } else {
-              residualLine.interrupt()
+              residualLine
                 .transition()
                 .duration(1000)
                 .styleTween("stroke-dasharray", function () {
@@ -339,7 +339,7 @@
           },
           step3(direction) {
             if (direction === "down") {
-              residualLine.interrupt()
+              residualLine
                 .transition()
                 .duration(1000)
                 .styleTween("stroke-dasharray", function () {
@@ -347,7 +347,7 @@
                   return d3.interpolate(`0,${length}`, `${length},${length}`);
                 })
             } else {
-              residualText.interrupt()
+              residualText
                 .transition()
                 .duration(1000)
                 .style("opacity", 0)
@@ -355,7 +355,7 @@
           },
           step4(direction) {
             if (direction === "down") {
-              residualText.interrupt()
+              residualText
                 .transition()
                 .delay((d, i) => 30 * i)
                 .style("opacity", 1)
@@ -384,12 +384,12 @@
                   ${yScale(d.observed)}px)`
                 )
                 
-              points.interrupt().style("opacity", 1)
-              residualText.interrupt().style("opacity", 1)
-              residualLine.interrupt().style("stroke-dasharray", "none")
+              points.style("opacity", 1)
+              residualText.style("opacity", 1)
+              residualLine.style("stroke-dasharray", "none")
 
-              xAxis1D.interrupt().style("opacity", 0)
-              residualPoint.interrupt().style("opacity", 0)
+              xAxis1D.style("opacity", 0)
+              residualPoint.style("opacity", 0)
 
             }
           },
