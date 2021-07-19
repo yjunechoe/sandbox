@@ -257,7 +257,8 @@
         const residualText = pointsG
           .append("text")
           .classed("residual-text", true)
-          .attr("dx", (d) => (d.residual > 0 ? "2em" : "-2em"))
+          .attr("y", d => d.residual > 0 ? -15 : 15)
+          .attr("dx", (d) => (d.residual > 0 ? "1.5em" : "-1.5em"))
           .attr("dy", "0.35em")
           .text((d) => {
             const residual = d3.format(".2f")(d.residual);
@@ -602,6 +603,7 @@
                 .transition(t2)
                 .call(d3.axisBottom(x_zScale1D))
               xAxis1DTitle
+                .transition(t1)
                 .style("opacity", 0)
                 .transition(t2)
                 .ease(d3.easeSinOut)
@@ -644,9 +646,15 @@
                 .style("opacity", 0)
               residualSD.interrupt()
                 .style("opacity", 0)
+              xAxis1D.interrupt()
+                .call(d3.axisBottom(x_zScale1D))
+              xAxis1DTitle.interrupt()
+                .style("opacity", 1)
+                .text("Residuals (z-scored)")
               
-              const t1 = plot.transition().duration(1000)
-              const t2 = t1.transition().duration(1000)
+              const t1 = plot.transition().duration(800)
+              const t2 = t1.transition().delay(200).duration(1000)
+                .ease(d3.easeElasticOut.period(0.5))
 
               // 1st transition
 
@@ -660,16 +668,15 @@
                 .attr("cy", yScaleHist(0))
                 .style("opacity", 0)
 
-              // 2nd transition
-
               yAxisHist
-                .transition(t2)
+                .transition(t1)
                 .style("opacity", 1)
+
+              // 2nd transition
 
               //// transition y and height simultaneously for grow from baseline
               residualBar
                 .transition(t2)
-                .ease(d3.easeQuadOut)
                 .attr("y", d => yScaleHist(d.length))
                 .attr("height", d => yScaleHist(0) - yScaleHist(d.length))
 
