@@ -105,7 +105,6 @@
           .attr("orient", "auto")
           .append("path")
             .attr("d", d => d == "-start" ? "M10,-5L0,0L10,5" : "M0,-5L10,0L0,5")
-            .style("opacity", 0)
 
         // setup dimensions
 
@@ -421,7 +420,7 @@
                 .attr("y1", yScale(model.predict(xDomain[0])))
                 .attr("y2", yScale(model.predict(xDomain[1])))
                 .style("opacity", 1)
-              arrows.style("opacity", 0)
+              arrowLine.style("opacity", 0)
 
               pointsG.interrupt()
                 .transition(t)
@@ -483,7 +482,7 @@
               xAxis1D
                 .transition(t2)
                 .style("opacity", 1)
-              arrows
+              arrowLine
                 .transition(t2)
                 .style("opacity", 1)
 
@@ -538,7 +537,7 @@
 
               xAxis1D.interrupt()
                 .style("opacity", 1)
-              arrows.interrupt()
+              arrowLine.interrupt()
                 .style("opacity", 1)
               
               residualPoint.interrupt()
@@ -559,6 +558,17 @@
               const t2 = t1.transition().duration(1000)
 
               // 1st transition (enter arrow marking 1SD)
+              const residualSD = geoms.append("g")
+                .classed("residual-sd", true)
+                .style("transform", `translate(${x_zScale1D(0)}px, ${averageY - 60}px)`)
+              residualSD.append("line")
+                .attr("stroke", "red")
+                .attr("stroke-width", 3)
+                .attr("x1", 0)
+                .attr("y1", 0)
+                .attr("x2", x_zScale1D(1) - x_zScale1D(0))
+                .attr("y2", 0)
+
 
               // 2nd transition (x-axis)
 
@@ -594,14 +604,14 @@
               xAxis1D
                 .transition(t2)
                 .style("transform", `translate(0px, ${averageY}px`)
-                .on("end", () => arrows.style("opacity", 1))
+                .on("end", () => arrowLine.style("opacity", 1))
 
             }
           },
           step7(direction) {
             if (direction == "down") {
 
-              arrows.style("opacity", 0)
+              arrowLine.style("opacity", 0)
               
               const t1 = plot.transition().duration(1000)
               const t2 = t1.transition().duration(1000)
