@@ -337,6 +337,13 @@
         const yAxisHist = panel.append("g")
           .classed("axis", true)
           .call(d3.axisLeft(yScaleHist).ticks(dims.panel.width / 200))
+          .call(g => {
+            g.append("text")
+              .attr("y", dims.panel.height / 4 - 25)
+              .style("font-size", "22px")
+              .style("text-anchor", "middle")
+              .text("Count")
+          })
 
         // init trnasparent state
         lmLine.style("opacity", 0)
