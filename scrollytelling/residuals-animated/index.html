@@ -576,7 +576,6 @@
 
               const t1 = plot.transition().duration(500)
               const t2 = t1.transition().duration(500).ease(d3.easeCubicOut)
-              const t3 = t2.transition().duration(0)
 
               residualBar
                 .transition(t1)
@@ -595,10 +594,7 @@
               xAxis1D
                 .transition(t2)
                 .style("transform", `translate(0px, ${averageY}px`)
-              
-              arrows
-                .transition(t3)
-                .style("opacity", 1)
+                .on("end", () => arrows.style("opacity", 1))
 
             }
           },
