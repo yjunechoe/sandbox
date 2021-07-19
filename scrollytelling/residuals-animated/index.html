@@ -87,7 +87,7 @@
       const draw = {}
       draw.canvas1 = function() {
 
-        const plot = canvas1
+        const plot = d3.select("#canvas1")
 
         const dims = {
           width: width,
@@ -301,7 +301,7 @@
                 .transition()
                 .duration(1000)
                 .style("opacity", 1)
-              canvas1.style("opacity", 0)
+              plot.style("opacity", 0)
               stepID.style("opacity", 0)
             }
           },
@@ -312,7 +312,7 @@
                 .duration(1000)
                 .style("opacity", 0)
 
-              canvas1.style("opacity", 1)
+              plot.style("opacity", 1)
               stepID.style("opacity", 1)
             } else {
               lmLine
