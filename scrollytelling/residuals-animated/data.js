@@ -1,7 +1,7 @@
 // Sample of the {palmerpenguins} data,
 // filtered to maximize x-spread for pedagogical purposes
 // ---{r}
-// data <- penguins %>%
+// data <- palmerpenguins::penguins %>%
 //  na.omit() %>%
 //  filter(species != "Chinstrap") %>%
 //  arrange(body_mass_g) %>%
