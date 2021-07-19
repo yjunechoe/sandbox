@@ -93,7 +93,7 @@
         const defs = plot.append("defs")
         //// arrow
         defs.append("marker")
-          .attr("id", "arrow")
+          .attr("id", "arrow-end")
           .attr("viewBox", [0, -5, 10 ,10])
           .attr("refX", 5)
           .attr("refY", 0)
@@ -102,6 +102,17 @@
           .attr("orient", "auto")
           .append("path")
             .attr("d", "M0,-5L10,0L0,5")
+            .attr("class", "arrowHead")
+        defs.append("marker")
+          .attr("id", "arrow-start")
+          .attr("viewBox", [0, -5, 10 ,10])
+          .attr("refX", 5)
+          .attr("refY", 0)
+          .attr("markerWidth", 4)
+          .attr("markerHeight", 4)
+          .attr("orient", "auto")
+          .append("path")
+            .attr("d", "M10,-5L0,0L10,5")
             .attr("class", "arrowHead")
 
         // setup dimensions
