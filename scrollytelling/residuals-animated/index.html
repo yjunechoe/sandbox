@@ -308,7 +308,6 @@
               g.selectAll(".tick text")
                 .attr("dy", "1em")
             })
-
         const yAxis = panel.append("g")
             .classed("axis", true)
             .call(d3.axisLeft(yScale).ticks(dims.panel.height / 80))
@@ -333,7 +332,6 @@
           .attr("x", dims.panel.width / 2)
           .attr("dy", "3em")
           .text("Residuals")
-
         const yAxisHist = panel.append("g")
           .classed("axis", true)
           .call(d3.axisLeft(yScaleHist).ticks(dims.panel.width / 200))
