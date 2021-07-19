@@ -92,8 +92,11 @@
         // defs
         const defs = plot.append("defs")
         //// arrow
-        defs.append("marker")
-          .attr("id", "arrow-end")
+        const arrows = defs
+          .selectAll("marker")
+          .data(["-start", "-end"])
+          .join("marker")
+          .attr("id", d => "arrow" + d)
           .attr("viewBox", [0, -5, 10 ,10])
           .attr("refX", 5)
           .attr("refY", 0)
@@ -101,19 +104,8 @@
           .attr("markerHeight", 4)
           .attr("orient", "auto")
           .append("path")
-            .attr("d", "M0,-5L10,0L0,5")
-            .attr("class", "arrowHead")
-        defs.append("marker")
-          .attr("id", "arrow-start")
-          .attr("viewBox", [0, -5, 10 ,10])
-          .attr("refX", 5)
-          .attr("refY", 0)
-          .attr("markerWidth", 4)
-          .attr("markerHeight", 4)
-          .attr("orient", "auto")
-          .append("path")
-            .attr("d", "M10,-5L0,0L10,5")
-            .attr("class", "arrowHead")
+            .attr("d", d => d == "-start" ? "M10,-5L0,0L10,5" : "M0,-5L10,0L0,5")
+            .style("opacity", 0)
 
         // setup dimensions
 
@@ -181,6 +173,19 @@
 
         const geoms = panel.append("g")
           .classed("geoms", true)
+
+        const arrowLine = geoms.append("line")
+          // line itself is invisible
+          .attr("stroke-dasharray", "0, 1")
+          .attr("stroke", "black")
+          .attr("stroke-width", 3)
+          .attr("x1", -5)
+          .attr('y1', averageY)
+          .attr("x2", dims.panel.width + 5)
+          .attr('y2', averageY)
+          // arrow-ends for 1D x axis transition
+          .attr("marker-start", "url(#arrow-start)")
+          .attr("marker-end", "url(#arrow-end)")
 
         // regression line
         const lmLine = geoms.append("line")
@@ -411,10 +416,12 @@
                 .style("opacity", 1)
 
               lmLine
+                .attr("stroke", "steelblue")
                 .transition(t)
                 .attr("y1", yScale(model.predict(xDomain[0])))
                 .attr("y2", yScale(model.predict(xDomain[1])))
                 .style("opacity", 1)
+              arrows.style("opacity", 0)
 
               pointsG.interrupt()
                 .transition(t)
@@ -476,6 +483,9 @@
               xAxis1D
                 .transition(t2)
                 .style("opacity", 1)
+              arrows
+                .transition(t2)
+                .style("opacity", 1)
 
               pointsG
                 .transition(t2)
@@ -528,8 +538,15 @@
 
               xAxis1D.interrupt()
                 .style("opacity", 1)
+              arrows.interrupt()
+                .style("opacity", 1)
+              
               residualPoint.interrupt()
                 .style("opacity", 0.5)
+              residualText.interrupt()
+                .style("opacity", 0)
+              residualLine.interrupt()
+                .style("stroke-dasharray", "0, 1")
               pointsG.interrupt()
                 .style(
                   "transform",
@@ -537,8 +554,6 @@
                   ${xScale1D(d.residual)}px,
                   ${yScale(d.observed) - (yScale(d.fitted) - averageY)}px)`
                 )
-              residualLine.interrupt()
-                .style("stroke-dasharray", "0, 1")
 
               const t1 = plot.transition().duration(1000)
               const t2 = t1.transition().duration(1000)
@@ -560,12 +575,17 @@
             } else {
 
               const t1 = plot.transition().duration(500)
-              const t2 = t1.transition().duration(500)
+              const t2 = t1.transition().duration(500).ease(d3.easeCubicOut)
+              const t3 = t2.transition().duration(0)
 
               residualBar
                 .transition(t1)
                 .attr("y", yScaleHist(0))
                 .attr("height", 0)
+
+              yAxisHist
+                .transition(t1)
+                .style("opacity", 0)
               
               residualPoint
                 .transition(t2)
@@ -575,15 +595,17 @@
               xAxis1D
                 .transition(t2)
                 .style("transform", `translate(0px, ${averageY}px`)
-
-              yAxisHist
-                .transition(t1)
-                .style("opacity", 0)
+              
+              arrows
+                .transition(t3)
+                .style("opacity", 1)
 
             }
           },
           step7(direction) {
             if (direction == "down") {
+
+              arrows.style("opacity", 0)
               
               const t1 = plot.transition().duration(1000)
               const t2 = t1.transition().duration(1000)
