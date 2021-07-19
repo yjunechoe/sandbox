@@ -89,6 +89,23 @@
 
         const plot = d3.select("#canvas1")
 
+        // defs
+        const defs = plot.append("defs")
+        //// arrow
+        defs.append("marker")
+          .attr("id", "arrow")
+          .attr("viewBox", [0, -5, 10 ,10])
+          .attr("refX", 5)
+          .attr("refY", 0)
+          .attr("markerWidth", 4)
+          .attr("markerHeight", 4)
+          .attr("orient", "auto")
+          .append("path")
+            .attr("d", "M0,-5L10,0L0,5")
+            .attr("class", "arrowHead")
+
+        // setup dimensions
+
         const dims = {
           width: width,
           height: height,
@@ -512,15 +529,19 @@
               residualLine.interrupt()
                 .style("stroke-dasharray", "0, 1")
 
-              const t = plot.transition().duration(1000)
+              const t1 = plot.transition().duration(1000)
+              const t2 = t1.transition().duration(1000)
+
+              // 1st transition (enter arrow marking 1SD)
+
+              // 2nd transition (x-axis)
 
               xAxis1D
-                .transition(t)
+                .transition(t1)
                 .call(d3.axisBottom(x_zScale1D))
-
               xAxis1DTitle
                 .style("opacity", 0)
-                .transition(t)
+                .transition(t1)
                 .ease(d3.easeSinOut)
                 .style("opacity", 1)
                 .text("Residuals (z-scored)")
