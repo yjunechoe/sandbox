@@ -44,10 +44,6 @@
     font-weight: 900;
     color: lightgrey;
     opacity: 0;
-    -webkit-transition: opacity 0.3s ease-out;
-    -moz-transition: opacity 0.3s ease-out;
-    -o-transition: opacity 0.3s ease-out;
-    transition: opacity 0.3s ease-out;
   }
 
   .figure__intro {
