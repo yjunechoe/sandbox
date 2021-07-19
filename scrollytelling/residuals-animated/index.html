@@ -558,17 +558,6 @@
               const t2 = t1.transition().duration(1000)
 
               // 1st transition (enter arrow marking 1SD)
-              const residualSD = geoms.append("g")
-                .classed("residual-sd", true)
-                .style("transform", `translate(${x_zScale1D(0)}px, ${averageY - 60}px)`)
-              residualSD.append("line")
-                .attr("stroke", "red")
-                .attr("stroke-width", 3)
-                .attr("x1", 0)
-                .attr("y1", 0)
-                .attr("x2", x_zScale1D(1) - x_zScale1D(0))
-                .attr("y2", 0)
-
 
               // 2nd transition (x-axis)
 
